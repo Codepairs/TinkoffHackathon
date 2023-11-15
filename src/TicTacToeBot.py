@@ -1,11 +1,10 @@
-import time
-
 import requests
 import os
 from dotenv import load_dotenv, find_dotenv
 from json import dumps, loads
 from LoggerClass import Logger
 from ReceiverClass import Receiver
+from SolverClass import Solver
 load_dotenv(find_dotenv())
 
 
@@ -19,13 +18,14 @@ class Bot:
         self.session_id = self._get_session_id()
         self.bot_url = self._get_bot_url()
         self.mediator_url = self._get_mediator_url()
-        self.solver = None
         self.receiver = Receiver(self.bot_url)
         self.thread = None
         self.bot_id = '123'
         self.password = '123'
         #self.figure = self.registration_request()
-        self.current_game_field = None
+        self.starting_game_field = '_' * 361
+        self.current_game_field = self.starting_game_field
+        self.solver = Solver(self.current_game_field)
 
     @staticmethod
     def _get_session_id():
@@ -83,17 +83,22 @@ class Bot:
         :return: new game field send to mediator
         """
         extension = '/bot/turn'
-        #data_to_request = self.current_game_field
-        data_to_request = {"game_field": '__x_xx'}
+        # Calculate new turn
+        suggested_turn = self.solver.make_turn()
+        data_to_request = {"game_field": f'{suggested_turn}'}
+        # Send turn and receive game_field after this turn
         new_field_response = requests.post(self.mediator_url + extension, json=data_to_request)
-        print(new_field_response.text)
         if not new_field_response.ok:
             raise requests.RequestException(f'Turn request failed: {new_field_response}')
-        raw_response = loads(new_field_response.content)
-        return raw_response['game_field']
+        new_field = loads(new_field_response.content)['game_field']
+        self.current_game_field = new_field
+        return new_field
 
 
 bot = Bot()
 bot.receiver.listen()
-print("Проверка любых действий")
-bot.turn_request()
+print("Запуск бота")
+for i in range(40):
+    bot.solver.logger.send_message(f'Ход {i+1}', 'info')
+    bot.current_game_field = bot.turn_request()
+    bot.solver.output(bot.current_game_field)
