@@ -12,8 +12,8 @@ class Test:
     def make_algo_move(self, s_field):
         matrix = Board.str_to_matrix(s_field)
         self.algo.board.matrix = matrix
-        x, y = self.algo.calculate_next_move(depth=4)
-        matrix[y][x]=2
+        x, y = self.algo.calculate_next_move(depth=3)
+        #matrix[y][x]=2
         s_field = Board.matrix_to_str(matrix)
         s_field = s_field[:x*19+y] + 'x' + s_field[x*19+y+1:]
         return s_field
@@ -41,7 +41,8 @@ if __name__ == '__main__':
     test = Test(test_board, default_s)
     cur_s = default_s
 
-    for i in range(10):
+    for i in range(40):
+        print('\n turn ', i)
         cur_s = Test.make_random_move(cur_s)
         cur_s = Test.make_algo_move(test, cur_s)
         Test.output(cur_s)

@@ -76,9 +76,7 @@ class Minimax:
 
         print("Cases calculated: " + str(self.evaluationCount) + " Calculation time: " + str(
             int((time.time() - startTime) * 1000)) + " ms")
-
-        evaluationCount = 0
-
+        self.evaluationCount = 0
         return move
 
     """
