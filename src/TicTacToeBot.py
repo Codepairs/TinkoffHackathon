@@ -1,9 +1,11 @@
+import time
+
 import requests
 import os
-
 from dotenv import load_dotenv, find_dotenv
 from json import dumps, loads
 from LoggerClass import Logger
+from ReceiverClass import Receiver
 load_dotenv(find_dotenv())
 
 
@@ -12,14 +14,18 @@ class Bot:
     Bot class for connect to mediator and play tic-tac-toe game
     """
     def __init__(self):
+
         self._logger = Logger('bot')
-        self.solver = None
         self.session_id = self._get_session_id()
         self.bot_url = self._get_bot_url()
         self.mediator_url = self._get_mediator_url()
+        self.solver = None
+        self.receiver = Receiver(self.bot_url)
+        self.thread = None
         self.bot_id = '123'
         self.password = '123'
-        self.figure = self.registration_request()
+        #self.figure = self.registration_request()
+        self.current_game_field = None
 
     @staticmethod
     def _get_session_id():
@@ -71,15 +77,16 @@ class Bot:
         raw_response = loads(figure_response.content)
         return raw_response['figure']
 
-    @staticmethod
     def turn_request(self) -> str:
         """
         Turn request. Response is a new game field after your turn
-        :return: new game field
+        :return: new game field send to mediator
         """
-        current_game_field = '___'
-        data_to_request = dumps({"game_field": current_game_field})
-        new_field_response = requests.post(f'{self.mediator_url}/bot/turn', data=data_to_request)
+        extension = '/bot/turn'
+        #data_to_request = self.current_game_field
+        data_to_request = {"game_field": '__x_xx'}
+        new_field_response = requests.post(self.mediator_url + extension, json=data_to_request)
+        print(new_field_response.text)
         if not new_field_response.ok:
             raise requests.RequestException(f'Turn request failed: {new_field_response}')
         raw_response = loads(new_field_response.content)
@@ -87,3 +94,6 @@ class Bot:
 
 
 bot = Bot()
+bot.receiver.listen()
+print("Проверка любых действий")
+bot.turn_request()
