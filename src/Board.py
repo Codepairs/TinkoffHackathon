@@ -4,13 +4,13 @@ import numpy as np
 class Board:
     # black is an opponent, our bot goes white (no racism)
     def __init__(self, board=None):
-        self.matrix = np.empty((19, 19))
+        self.matrix = np.zeros((19, 19))
         if board:
             self.matrix = copy.deepcopy(board.matrix)
 
     @staticmethod
     def str_to_matrix(str_field):
-        matrix = np.empty((19, 19))
+        matrix = np.zeros((19, 19))
         for i in range(19):
             for j in range(19):
                 # i*19 + j
@@ -34,6 +34,8 @@ class Board:
                         str_field += 'x'
                     case 1:
                         str_field += 'o'
+                    case 0:
+                        str_field += '_'
         return str_field
 
     def add_stone(self, posX, posY, black: bool):

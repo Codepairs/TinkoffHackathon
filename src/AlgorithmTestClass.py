@@ -13,6 +13,7 @@ class Test:
         matrix = Board.str_to_matrix(s_field)
         self.algo.board.matrix = matrix
         x, y = self.algo.calculate_next_move(depth=4)
+        matrix[y][x]=2
         s_field = Board.matrix_to_str(matrix)
         s_field = s_field[:x*19+y] + 'x' + s_field[x*19+y+1:]
         return s_field
@@ -31,7 +32,7 @@ class Test:
         print('current board:\n')
         for i in range(19):
             for j in range(19):
-                print(s_field[i*19+j])
+                print(s_field[i*19+j], end='')
             print()
 
 if __name__ == '__main__':

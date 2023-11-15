@@ -5,7 +5,7 @@ class Minimax:
     def __init__(self, board: Board):
         # This variable is used to track the number of evaluations for benchmarking purposes.
         self.evaluationCount = None
-        self.evalutionCount = 0
+        self.evaluationCount = 0
         # Board instance is responsible for board mechanics
         self.board = board
         #// Win score should be greater than all possible board scores
@@ -20,7 +20,7 @@ class Minimax:
     // This value will be used as the score in the Minimax algorithm.
     '''
     def evaluate_board_for_white(self, board, blackTurn: bool):
-        self.evalutionCount+=1
+        self.evaluationCount+=1
 
         blackScore = self.get_score(board, True, blackTurn)
         whiteScore = self.get_score(board, False, blackTurn)
@@ -74,7 +74,7 @@ class Minimax:
                 move[0] = bestMove[1]
                 move[1] = bestMove[2]
 
-        print("Cases calculated: " + self.evaluationCount + " Calculation time: " + str(
+        print("Cases calculated: " + str(self.evaluationCount) + " Calculation time: " + str(
             int((time.time() - startTime) * 1000)) + " ms")
 
         evaluationCount = 0
@@ -90,7 +90,7 @@ class Minimax:
 
         # Last depth (terminal node), evaluate the current board score.
         if depth == 0:
-            return [self.evaluate_board_for_white(dummy_board.matrix, not max_player), None, None]
+            return [self.evaluate_board_for_white(dummy_board, not max_player), None, None]
 
         # Generate all possible moves from this node of the Minimax Tree
         all_possible_moves = dummy_board.generate_moves(dummy_board.matrix)
