@@ -1,5 +1,7 @@
 import copy
 import numpy as np
+import numba
+
 
 class Board:
     # black is an opponent, our bot goes white (no racism)
@@ -8,7 +10,25 @@ class Board:
         if board:
             self.matrix = copy.deepcopy(board.matrix)
 
+    def get_board_matrix(self):
+        return self.matrix
+
+
+@numba.experimental.jitclass()
+class BoardCalculations:
     @staticmethod
+    def add_stone(matrix, posX, posY, black: bool):
+        matrix[posY][posX] = 2 if black else 1
+
+    @staticmethod
+    def remove_stone(matrix, posX, posY):
+        matrix[posY][posX] = 0
+    @staticmethod
+    def clone_matrix(matrix):
+        return copy.deepcopy(matrix)
+
+    @staticmethod
+    #@numba.njit(parallel=True)
     def str_to_matrix(str_field):
         matrix = np.zeros((19, 19))
         for i in range(19):
@@ -23,6 +43,7 @@ class Board:
         return matrix
 
     @staticmethod
+    #@numba.njit(parallel=True)
     def matrix_to_str(matrix):
         str_field = ''
         for i in range(19):
@@ -38,13 +59,12 @@ class Board:
                         str_field += '_'
         return str_field
 
-    def add_stone(self, posX, posY, black: bool):
-        self.matrix[posY][posX] = 2 if black else 1
 
-    def remove_stone(self, posX, posY):
-        self.matrix[posY][posX] = 0
 
-    def generate_moves(self, board_matrix):
+
+    @staticmethod
+    #@numba.njit(parallel=True)
+    def generate_moves(board_matrix):
         move_list = []
         board_size = len(board_matrix)
 
@@ -88,5 +108,3 @@ class Board:
 
         return move_list
 
-    def get_board_matrix(self):
-        return self.matrix

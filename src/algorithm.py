@@ -1,29 +1,34 @@
 from Board import Board
+from Board import BoardCalculations
 import time
+import numba
 
+#@numba.experimental.jitclass()
 class Minimax:
+    WIN_SCORE = 100_000_000
     def __init__(self, board: Board):
         # This variable is used to track the number of evaluations for benchmarking purposes.
-        self.evaluationCount = None
-        self.evaluationCount = 0
+        #self.evaluationCount = None
+        #self.evaluationCount = 0
         # Board instance is responsible for board mechanics
         self.board = board
         #// Win score should be greater than all possible board scores
-        self.WIN_SCORE = 100_000_000
 
-    def get_win_score(self):
-        return self.WIN_SCORE
+    @staticmethod
+    def get_win_score():
+        return Minimax.WIN_SCORE
 
     '''
     // This function calculates the relative score of the white player against the black.
     // (i.e. how likely is white player to win the game before the black player)
     // This value will be used as the score in the Minimax algorithm.
     '''
-    def evaluate_board_for_white(self, board, blackTurn: bool):
-        self.evaluationCount+=1
+    @staticmethod
+    def evaluate_board_for_white(board, blackTurn: bool):
+        #self.evaluationCount+=1
 
-        blackScore = self.get_score(board, True, blackTurn)
-        whiteScore = self.get_score(board, False, blackTurn)
+        blackScore = Minimax.get_score(board, True, blackTurn)
+        whiteScore = Minimax.get_score(board, False, blackTurn)
 
         if (blackScore==0):
             blackScore = 1.0
@@ -36,18 +41,20 @@ class Minimax:
     // (i.e. How good a player's general standing on the board by considering how many 
     //  consecutive 2's, 3's, 4's it has, how many of them are blocked etc...)
     '''
-    def get_score(self, board, forBlack: bool, blacksTurn: bool):
+    @staticmethod
+    def get_score(board, forBlack: bool, blacksTurn: bool):
         # Read the board
         boardMatrix = board.get_board_matrix()
 
         # Calculate score for each of the 3 directions
-        return self.evaluate_horizontal(boardMatrix, forBlack, blacksTurn) + \
-                self.evaluate_vertical(boardMatrix, forBlack, blacksTurn) + \
-                self.evaluate_diagonal(boardMatrix, forBlack, blacksTurn)
+        return MinimaxCalculations.evaluate_horizontal(boardMatrix, forBlack, blacksTurn) + \
+                MinimaxCalculations.evaluate_vertical(boardMatrix, forBlack, blacksTurn) + \
+                MinimaxCalculations.evaluate_diagonal(boardMatrix, forBlack, blacksTurn)
 
 
 
     # This function is used to get the next intelligent move to make for the AI.
+    #@numba.njit(parallel=True)
     def calculate_next_move(self, depth):
         # Block the board for AI to make a decision.
         move = [0, 0]
@@ -57,24 +64,25 @@ class Minimax:
 
         # Check if any available move can finish the game to make sure the AI always
         # takes the opportunity to finish the game.
-        bestMove = self.search_winning_move(self.board)
+        bestMove = MinimaxCalculations.search_winning_move(self.board.matrix)
 
         if bestMove != None:
             # Finishing move is found.
             move[0] = bestMove[1]
             move[1] = bestMove[2]
         else:
-            tmpBoard = Board(self.board)
+            tmp_board_matrix = Board(self.board)
 
             # If there is no such move, search the minimax tree with specified depth.
-            bestMove = self.minimax_search_ab(depth, tmpBoard, True, -1.0, self.get_win_score())
+            bestMove = Minimax.minimax_search_ab(depth, tmp_board_matrix, True, -1.0, Minimax.get_win_score())
             if bestMove[1] == None:
                 move = None
             else:
                 move[0] = bestMove[1]
                 move[1] = bestMove[2]
 
-        print("Cases calculated: " + str(self.evaluationCount) + " Calculation time: " + str(
+        # print("Cases calculated: " + str(self.evaluationCount) + "
+        print("Calculation time: " + str(
             int((time.time() - startTime) * 1000)) + " ms")
         self.evaluationCount = 0
         return move
@@ -84,21 +92,29 @@ class Minimax:
      beta: Best Player Move (Min)
      returns: [score, move[0], move[1]]
     """
-    def minimax_search_ab(self, depth, dummy_board, max_player, alpha, beta):
+    @staticmethod
+    #@numba.njit(parallel=True)
+    def minimax_search_ab(depth, dummy_board_matrix, max_player, alpha, beta):
 
         # Last depth (terminal node), evaluate the current board score.
         if depth == 0:
-            return [self.evaluate_board_for_white(dummy_board, not max_player), None, None]
+            return [Minimax.evaluate_board_for_white(dummy_board_matrix, not max_player), None, None]
 
         # Generate all possible moves from this node of the Minimax Tree
-        all_possible_moves = dummy_board.generate_moves(dummy_board.matrix)
+        all_possible_moves = BoardCalculations.generate_moves(dummy_board_matrix)
 
         # If there are no possible moves left, treat this node as a terminal node and return the score.
         if len(all_possible_moves) == 0:
-            return [self.evaluate_board_for_white(dummy_board, not max_player), None, None]
+            return [Minimax.evaluate_board_for_white(dummy_board_matrix, not max_player), None, None]
 
+        return MinimaxCalculations.continue_minimax_search_ab(depth, dummy_board_matrix, max_player, alpha, beta, all_possible_moves)
+
+#@numba.experimental.jitclass()
+class MinimaxCalculations:
+    @staticmethod
+    @numba.njit
+    def continue_minimax_search_ab(depth, dummy_board_matrix, max_player, alpha, beta, all_possible_moves):
         best_move = [None, None, None]
-
         # Generate Minimax Tree and calculate node scores.
         if max_player:
             # Initialize the starting best move with -infinity.
@@ -108,39 +124,39 @@ class Minimax:
             for move in all_possible_moves:
 
                 # Play the move on the temporary board without drawing anything.
-                dummy_board.add_stone(move[1], move[0], False)
+                BoardCalculations.add_stone(dummy_board_matrix, move[1], move[0], False)
 
                 # Call the minimax function for the next depth, to look for a minimum score.
                 '''
                 // Call the minimax function for the next depth, to look for a minimum score.
-				// This function recursively generates new Minimax trees branching from this node 
-				// (if the depth > 0) and searches for the minimum white score in each of the sub trees.
-				// We will find the maximum score of this depth, among the minimum scores found in the
-				// lower depth.
+                // This function recursively generates new Minimax trees branching from this node 
+                // (if the depth > 0) and searches for the minimum white score in each of the sub trees.
+                // We will find the maximum score of this depth, among the minimum scores found in the
+                // lower depth.
                 '''
-                temp_move = self.minimax_search_ab(depth - 1, dummy_board, False, alpha, beta)
+                temp_move = Minimax.minimax_search_ab(depth - 1, dummy_board_matrix, False, alpha, beta)
 
                 # Backtrack and remove.
-                dummy_board.remove_stone(move[1], move[0])
+                BoardCalculations.remove_stone(dummy_board_matrix, move[1], move[0])
 
                 # Updating alpha (alpha value holds the maximum score)
                 '''
                 // Updating alpha (alpha value holds the maximum score)
-				// When searching for the minimum, if the score of a node is lower than the alpha 
-				// (max score of uncle nodes from one upper level) the whole subtree originating
-				// from that node will be discarded, since the maximizing player will choose the 
-				// alpha node over any node with a score lower than the alpha. 
+                // When searching for the minimum, if the score of a node is lower than the alpha 
+                // (max score of uncle nodes from one upper level) the whole subtree originating
+                // from that node will be discarded, since the maximizing player will choose the 
+                // alpha node over any node with a score lower than the alpha. 
                 '''
                 if temp_move[0] > alpha:
                     alpha = temp_move[0]
 
                 '''
                 // Pruning with beta
-				// Beta value holds the minimum score among the uncle nodes from one upper level.
-				// We need to find a score lower than this beta score, because any score higher than
-				// beta will be eliminated by the minimizing player (upper level). If the score is
-				// higher than (or equal to) beta, break out of loop discarding any remaining nodes 
-				// and/or subtrees and return the last move.
+                // Beta value holds the minimum score among the uncle nodes from one upper level.
+                // We need to find a score lower than this beta score, because any score higher than
+                // beta will be eliminated by the minimizing player (upper level). If the score is
+                // higher than (or equal to) beta, break out of loop discarding any remaining nodes 
+                // and/or subtrees and return the last move.
                 '''
                 if temp_move[0] >= beta:
                     return temp_move
@@ -161,35 +177,35 @@ class Minimax:
             for move in all_possible_moves:
 
                 # Play the move on the temporary board without drawing anything.
-                dummy_board.add_stone(move[1], move[0], True)
+                dummy_board_matrix.add_stone(move[1], move[0], True)
 
                 '''
                 // Call the minimax function for the next depth, to look for a maximum score.
-				// This function recursively generates new Minimax trees branching from this node 
-				// (if the depth > 0) and searches for the maximum white score in each of the sub trees.
-				// We will find the minimum score of this depth, among the maximum scores found in the
-				// lower depth.
+                // This function recursively generates new Minimax trees branching from this node 
+                // (if the depth > 0) and searches for the maximum white score in each of the sub trees.
+                // We will find the minimum score of this depth, among the maximum scores found in the
+                // lower depth.
                 '''
-                temp_move = self.minimax_search_ab(depth - 1, dummy_board, True, alpha, beta)
+                temp_move = Minimax.minimax_search_ab(depth - 1, dummy_board_matrix, True, alpha, beta)
 
-                dummy_board.remove_stone(move[1], move[0])
+                BoardCalculations.remove_stone(dummy_board_matrix, move[1], move[0])
 
                 '''
                 // Updating beta (beta value holds the minimum score)
-				// When searching for the maximum, if the score of a node is higher than the beta 
-				// (min score of uncle nodes from one upper level) the whole subtree originating
-				// from that node will be discarded, since the minimizing player will choose the 
-				// beta node over any node with a score higher than the beta. 
+                // When searching for the maximum, if the score of a node is higher than the beta 
+                // (min score of uncle nodes from one upper level) the whole subtree originating
+                // from that node will be discarded, since the minimizing player will choose the 
+                // beta node over any node with a score higher than the beta. 
                 '''
                 beta = min(temp_move[0], beta)
 
                 '''
                 // Pruning with alpha
-				// Alpha value holds the maximum score among the uncle nodes from one upper level.
-				// We need to find a score higher than this alpha score, because any score lower than
-				// alpha will be eliminated by the maximizing player (upper level). If the score is
-				// lower than (or equal to) alpha, break out of loop discarding any remaining nodes 
-				// and/or subtrees and return the last move.
+                // Alpha value holds the maximum score among the uncle nodes from one upper level.
+                // We need to find a score higher than this alpha score, because any score lower than
+                // alpha will be eliminated by the maximizing player (upper level). If the score is
+                // lower than (or equal to) alpha, break out of loop discarding any remaining nodes 
+                // and/or subtrees and return the last move.
                 '''
                 if temp_move[0] <= alpha:
                     return temp_move
@@ -199,21 +215,24 @@ class Minimax:
                     best_move = temp_move
                     best_move[1] = move[0]
                     best_move[2] = move[1]
-        #// Return the best move found in this depth
+        # // Return the best move found in this depth
         return best_move
 
-    def search_winning_move(self, board):
+
+    @staticmethod
+    @numba.njit(parallel=True)
+    def search_winning_move(board):
         all_possible_moves = board.generate_moves(board.matrix)
         winning_move = [None, None, None]
 
         for move in all_possible_moves:
             # Create a temporary board that is equivalent to the current board
-            dummy_board = Board(board)
+            dummy_board = BoardCalculations.clone_matrix(board.matrix)
             # Play the move on that temporary board without drawing anything
             dummy_board.add_stone(move[1], move[0], False)
 
             # If the white player has a winning score in that temporary board, return the move.
-            if self.get_score(dummy_board, False, False) >= self.WIN_SCORE:
+            if Minimax.get_score(dummy_board, False, False) >= Minimax.WIN_SCORE:
                 winning_move[1] = move[0]
                 winning_move[2] = move[1]
                 return winning_move
@@ -221,7 +240,9 @@ class Minimax:
         return None
 
     # This function calculates the score by evaluating the stone positions in horizontal direction
-    def evaluate_horizontal(self, boardMatrix, forBlack: bool, playersTurn: bool):
+    @staticmethod
+    @numba.njit(parallel=True)
+    def evaluate_horizontal(boardMatrix, forBlack: bool, playersTurn: bool):
 
         evaluations = [0, 2, 0] # [0] -> consecutive count, [1] -> block count, [2] -> score
         '''
@@ -240,9 +261,9 @@ class Minimax:
             #// Iterate over all cells in a row
             for j in range( len(boardMatrix[0])):
                 #// Check if the selected player has a stone in the current cell
-                self.evaluate_directions(boardMatrix, i, j, forBlack, playersTurn, evaluations)
+                MinimaxCalculations.evaluate_directions(boardMatrix, i, j, forBlack, playersTurn, evaluations)
 
-            self.evaluate_directions_after_one_pass(evaluations, forBlack, playersTurn)
+            MinimaxCalculations.evaluate_directions_after_one_pass(evaluations, forBlack, playersTurn)
 
         return evaluations[2]
 
@@ -250,36 +271,43 @@ class Minimax:
     This function calculates the score by evaluating the stone positions in vertical direction
      The procedure is the exact same of the horizontal one.
     '''
-    def evaluate_vertical(self, boardMatrix, forBlack:bool, playersTurn:bool):
+
+    @staticmethod
+    @numba.njit(parallel=True)
+    def evaluate_vertical(boardMatrix, forBlack:bool, playersTurn:bool):
         evaluations = [0, 2, 0] # [0] -> consecutive count, [1] -> block count, [2] -> score
 
         for j in range(len(boardMatrix[0])):
             for i in range(len(boardMatrix)):
-                self.evaluate_directions(boardMatrix, i, j, forBlack, playersTurn, evaluations)
-            self.evaluate_directions_after_one_pass(evaluations, forBlack, playersTurn)
+                MinimaxCalculations.evaluate_directions(boardMatrix, i, j, forBlack, playersTurn, evaluations)
+            MinimaxCalculations.evaluate_directions_after_one_pass(evaluations, forBlack, playersTurn)
         return evaluations[2]
 
-    def evaluate_diagonal(self, boardMatrix, forBlack, playersTurn):
+    @staticmethod
+    @numba.njit(parallel=True)
+    def evaluate_diagonal(boardMatrix, forBlack, playersTurn):
         evaluations = [0, 2, 0]  # [0] -> consecutive count, [1] -> block count, [2] -> score
         # From bottom-left to top-right diagonally
         for k in range(0, 2 * (len(boardMatrix) - 1) + 1):
             iStart = max(0, k - len(boardMatrix) + 1)
             iEnd = min(len(boardMatrix) - 1, k)
             for i in range(iStart, iEnd + 1):
-                self.evaluate_directions(boardMatrix, i, k - i, forBlack, playersTurn, evaluations)
-            self.evaluate_directions_after_one_pass(evaluations, forBlack, playersTurn)
+                MinimaxCalculations.evaluate_directions(boardMatrix, i, k - i, forBlack, playersTurn, evaluations)
+            MinimaxCalculations.evaluate_directions_after_one_pass(evaluations, forBlack, playersTurn)
 
         # From top-left to bottom-right diagonally
         for k in range(1 - len(boardMatrix), len(boardMatrix)):
             iStart = max(0, k)
             iEnd = min(len(boardMatrix) + k - 1, len(boardMatrix) - 1)
             for i in range(iStart, iEnd + 1):
-                self.evaluate_directions(boardMatrix, i, i - k, forBlack, playersTurn, evaluations)
-            self.evaluate_directions_after_one_pass(evaluations, forBlack, playersTurn)
+                MinimaxCalculations.evaluate_directions(boardMatrix, i, i - k, forBlack, playersTurn, evaluations)
+            MinimaxCalculations.evaluate_directions_after_one_pass(evaluations, forBlack, playersTurn)
 
         return evaluations[2]
 
-    def evaluate_directions(self, boardMatrix, i, j, isBot, botsTurn, eval):
+    @staticmethod
+    @numba.njit(parallel=True)
+    def evaluate_directions(boardMatrix, i, j, isBot, botsTurn, eval):
         # Check if the selected player has a stone in the current cell
         if boardMatrix[i][j] == (2 if isBot else 1):
             # Increment consecutive stones count
@@ -291,7 +319,7 @@ class Minimax:
                 # Consecutive set is not blocked by opponent, decrement block count
                 eval[1] -= 1
                 # Get consecutive set score
-                eval[2] += self.get_consecutive_set_score(eval[0], eval[1], isBot == botsTurn)
+                eval[2] += MinimaxCalculations.get_consecutive_set_score(eval[0], eval[1], isBot == botsTurn)
                 # Reset consecutive stone count
                 eval[0] = 0
                 # Current cell is empty, next consecutive set will have at most 1 blocked side.
@@ -302,7 +330,7 @@ class Minimax:
         # Check if there were any consecutive stones before this empty cell
         elif eval[0] > 0:
             # Get consecutive set score
-            eval[2] += self.get_consecutive_set_score(eval[0], eval[1], isBot == botsTurn)
+            eval[2] += MinimaxCalculations.get_consecutive_set_score(eval[0], eval[1], isBot == botsTurn)
             # Reset consecutive stone count
             eval[0] = 0
             # Current cell is occupied by opponent, next consecutive set may have 2 blocked sides
@@ -311,10 +339,11 @@ class Minimax:
             # Current cell is occupied by opponent, next consecutive set may have 2 blocked sides
             eval[1] = 2
 
-    def evaluate_directions_after_one_pass(self, eval, isBot, playersTurn):
+    @staticmethod
+    def evaluate_directions_after_one_pass(eval, isBot, playersTurn):
         # End of row, check if there were any consecutive stones before we reached right border
         if eval[0] > 0:
-            eval[2] += self.get_consecutive_set_score(eval[0], eval[1], isBot == playersTurn)
+            eval[2] += MinimaxCalculations.get_consecutive_set_score(eval[0], eval[1], isBot == playersTurn)
         # Reset consecutive stone and blocks count
         eval[0] = 0
         eval[1] = 2
@@ -323,6 +352,8 @@ class Minimax:
     # This function returns the score of a given consecutive stone set.
     # count: Number of consecutive stones in the set
     # blocks: Number of blocked sides of the set (2: both sides blocked, 1: single side blocked, 0: both sides free)
+    @staticmethod
+    @numba.njit
     def get_consecutive_set_score(self, count, blocks, currentTurn):
         winGuarantee = 1000000
 
@@ -332,7 +363,7 @@ class Minimax:
 
         if count == 5:
             # 5 consecutive wins the game
-            return self.WIN_SCORE
+            return Minimax.WIN_SCORE
         elif count == 4:
             # 4 consecutive stones in the user's turn guarantees a win.
             # (User can win the game by placing the 5th stone after the set)
@@ -383,5 +414,5 @@ class Minimax:
             return 1
 
         # More than 5 consecutive stones?
-        return self.WIN_SCORE * 2
+        return Minimax.WIN_SCORE * 2
 

@@ -1,5 +1,5 @@
-from algorithm import Minimax
-from Board import Board
+from algorithm import Minimax, MinimaxCalculations
+from Board import Board, BoardCalculations
 import random
 
 class Test:
@@ -10,11 +10,11 @@ class Test:
 
 
     def make_algo_move(self, s_field):
-        matrix = Board.str_to_matrix(s_field)
+        matrix = BoardCalculations.str_to_matrix(s_field)
         self.algo.board.matrix = matrix
         x, y = self.algo.calculate_next_move(depth=3)
         #matrix[y][x]=2
-        s_field = Board.matrix_to_str(matrix)
+        s_field = BoardCalculations.matrix_to_str(matrix)
         s_field = s_field[:x*19+y] + 'x' + s_field[x*19+y+1:]
         return s_field
 
