@@ -1,21 +1,9 @@
 import copy
 import numpy as np
-import numba
 
 
 class Board:
     # black is an opponent, our bot goes white (no racism)
-    def __init__(self, board=None):
-        self.matrix = np.zeros((19, 19))
-        if board:
-            self.matrix = copy.deepcopy(board.matrix)
-
-    def get_board_matrix(self):
-        return self.matrix
-
-
-@numba.experimental.jitclass()
-class BoardCalculations:
     @staticmethod
     def add_stone(matrix, posX, posY, black: bool):
         matrix[posY][posX] = 2 if black else 1
@@ -59,11 +47,7 @@ class BoardCalculations:
                         str_field += '_'
         return str_field
 
-
-
-
     @staticmethod
-    #@numba.njit(parallel=True)
     def generate_moves(board_matrix):
         move_list = []
         board_size = len(board_matrix)
