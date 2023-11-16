@@ -24,7 +24,7 @@ class Figure:
         elif figure == self._zero:
             return self._crossed_out_zero
         else:
-            raise NotCorrectFigure('Invalid figure')
+            raise NotCorrectFigure('Invalid _figure')
 
     def get_opposite_figure(self, figure):
         if figure == self._cross:
@@ -32,7 +32,7 @@ class Figure:
         elif figure == self._zero:
             return self._cross
         else:
-            raise NotCorrectFigure('Invalid figure')
+            raise NotCorrectFigure('Invalid _figure')
 
 
 
