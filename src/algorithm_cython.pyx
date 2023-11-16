@@ -4,6 +4,8 @@ cimport numpy as cnp
 #from Board import Board
 cnp.import_array()
 
+from libc.time cimport time, time_t
+#from posix.time cimport clock_gettime, timespec, CLOCK_REALTIME
 
 DTYPE = np.int64
 ctypedef cnp.int64_t DTYPE_t
@@ -27,10 +29,14 @@ cdef class Board:
     @staticmethod
     #@numba.njit(parallel=True)
     def str_to_matrix(str str_field):
+
         cdef cnp.ndarray matrix = np.zeros((19, 19))
         cdef int idx = 0
         cdef str symb = ''
+        cdef int i = 0
+        cdef int j = 0
         for i in range(19):
+            j = 0
             for j in range(19):
                 # i*19 + j
                 idx = i*19+j
@@ -47,7 +53,11 @@ cdef class Board:
         cdef str str_field = ''
         cdef int idx = 0
         cdef int num = 0
+
+        cdef int i = 0
+        cdef int j = 0
         for i in range(19):
+            j = 0
             for j in range(19):
                 # i*19 + j
                 idx = i * 19 + j
@@ -67,7 +77,10 @@ cdef class Board:
 
         # Look for cells that have at least one stone in an adjacent cell.
         cdef list move = [0, 0]
+        cdef int i = 0
+        cdef int j = 0
         for i in range(board_size):
+            j = 0
             for j in range(board_size):
                 if board_matrix[i][j] > 0:
                     continue
@@ -155,13 +168,18 @@ cdef class Minimax:
         cdef int[2] move = [0, 0]
 
         # Used for benchmarking purposes only.
-        cdef float startTime = time.time()
-
+        '''
+        cdef timespec ts
+        cdef double start_time, current_time
+        clock_gettime(CLOCK_REALTIME, &ts)
+        start_time = ts.tv_sec + (ts.tv_nsec / 1000000000.)
+        '''
+        #cdef time_t start_time = time(NULL)
         # Check if any available move can finish the game to make sure the AI always
         # takes the opportunity to finish the game.
         cdef list bestMove = Minimax.search_winning_move(matrix)
 
-        if len(bestMove) != 1:
+        if len(bestMove) <= 1:
             # Finishing move is found.
             move[0] = bestMove[1]
             move[1] = bestMove[2]
@@ -175,10 +193,11 @@ cdef class Minimax:
             else:
                 move[0] = bestMove[1]
                 move[1] = bestMove[2]
-
+        #clock_gettime(CLOCK_REALTIME, &ts)
+        #cdef time_t current_time = time(NULL)
         # print("Cases calculated: " + str(self.evaluationCount) + "
-        print("Calculation time: " + str(
-            int((time.time() - startTime) * 1000)) + " ms")
+        #print("Calculation time: " + str(
+        #    int((current_time - start_time) * 1000)) + " ms")
         return move
 
     """
@@ -350,9 +369,11 @@ cdef class Minimax:
         // decremented by 1.
         //
         Iterate over all rows '''
-
+        cdef int i = 0
+        cdef int j = 0
         for i in range(len(boardMatrix)):
             #// Iterate over all cells in a row
+            j = 0
             for j in range( len(boardMatrix[0])):
                 #// Check if the selected player has a stone in the current cell
                 Minimax.evaluate_directions(boardMatrix, i, j, forBlack, playersTurn, evaluations)
@@ -369,8 +390,10 @@ cdef class Minimax:
     @staticmethod
     cdef evaluate_vertical(cnp.ndarray boardMatrix, int forBlack,int playersTurn):
         cdef float[3] evaluations = [0, 2, 0] # [0] -> consecutive count, [1] -> block count, [2] -> score
-
+        cdef int j = 0
+        cdef int i = 0
         for j in range(len(boardMatrix[0])):
+            i = 0
             for i in range(len(boardMatrix)):
                 Minimax.evaluate_directions(boardMatrix, i, j, forBlack, playersTurn, evaluations)
             Minimax.evaluate_directions_after_one_pass(evaluations, forBlack, playersTurn)
@@ -383,18 +406,23 @@ cdef class Minimax:
         cdef int iStart = 0
         cdef int iEnd = 0
 
+        cdef int i = 0
+        cdef int k = 0
         for k in range(0, 2 * (len(boardMatrix) - 1) + 1):
             iStart = max(0, k - len(boardMatrix) + 1)
             iEnd = min(len(boardMatrix) - 1, k)
+            i = 0
             for i in range(iStart, iEnd + 1):
                 Minimax.evaluate_directions(boardMatrix, i, k - i, forBlack, playersTurn, evaluations)
             Minimax.evaluate_directions_after_one_pass(evaluations, forBlack, playersTurn)
 
         # From top-left to bottom-right diagonally
-        
+        i = 0
+        k = 0
         for k in range(1 - len(boardMatrix), len(boardMatrix)):
             iStart = max(0, k)
             iEnd = min(len(boardMatrix) + k - 1, len(boardMatrix) - 1)
+            i = 0
             for i in range(iStart, iEnd + 1):
                 Minimax.evaluate_directions(boardMatrix, i, i - k, forBlack, playersTurn, evaluations)
             Minimax.evaluate_directions_after_one_pass(evaluations, forBlack, playersTurn)

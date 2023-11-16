@@ -1,6 +1,7 @@
 #from algorithm import Minimax
 from Cython.Build import cythonize
 import distutils
+import time
 import pyximport
 pyximport.install()
 from algorithm_cython import Minimax, Board
@@ -14,7 +15,11 @@ class Test:
     @staticmethod
     def make_algo_move(string_field):
         matrix = Board.str_to_matrix(string_field)
+        start_time = time.time()
         x, y = Minimax.calculate_next_move(matrix, depth=2)
+        end_time = time.time()
+        print("Calculation time: " + str(
+            int((end_time - start_time) * 1000)) + " ms")
 
         string_field = Board.matrix_to_str(matrix)
         string_field = string_field[:x * 19 + y] + 'x' + string_field[x * 19 + y + 1:]
