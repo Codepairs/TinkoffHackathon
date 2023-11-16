@@ -36,7 +36,7 @@ MANIFEST
 pip-log.txt
 pip-delete-this-directory.txt
 
-# Unit solver / coverage reports
+# Unit _solver / coverage reports
 htmlcov/
 .tox/
 .nox/

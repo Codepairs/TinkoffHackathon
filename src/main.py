@@ -1,12 +1,12 @@
-from LoggerClass import Logger
-from FigureClass import Figure
+import time
+
+from TicTacToeBot import Bot
 
 
 def main():
-    main_logger = Logger('Main')
-    main_logger.send_message('Hello, World!', 'info')
-    figure = Figure()
-    print(figure.get_cross_out_figure('f'))
+    bot = Bot()
+    bot.listen()
+
 
 
 if __name__ == '__main__':

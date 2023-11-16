@@ -8,7 +8,7 @@ class Solver:
     """
     Solver class for playing tic-tac-toe in 19x19
     """
-    def __init__(self, current_field: str):
+    def __init__(self, current_field: str, figure: str):
 
         # ВОТ ТУТ Я НЕ ПОНИМАЮ ЧТО ЭТО ЗА ПЕРЕМЕННАЯ И ЧТО В НЕЕ ПЕРЕДАЕТСЯ ЧИНИ
         self.algo = Minimax(Board())
@@ -30,7 +30,7 @@ class Solver:
         return field_after_turn
 
     @staticmethod
-    def make_random_move(current_field: str):
+    def make_random_move(current_field: str, figure: str) -> str:
         """
         Make random move for tic-tac-toe
         :param current_field:
@@ -39,7 +39,8 @@ class Solver:
         ptr = random.randint(0, 360)
         while (current_field[ptr] != '_'):
             ptr = random.randint(0, 360)
-        new_field = current_field[:ptr] + 'o' + current_field[ptr + 1:]
+        new_field = current_field[:ptr] + figure + current_field[ptr + 1:]
+        print(new_field)
         return new_field
 
     def output(self, game_field: str):
@@ -56,13 +57,13 @@ class Solver:
 '''
 test_board = Board()
 starting_board = '_' * 361
-solver = Solver(test_board, starting_board)
+_solver = Solver(test_board, starting_board)
 current_field = starting_board
 for i in range(40):
-    solver.logger.send_message(f'Ход {i+1}', 'info')
+    _solver.logger.send_message(f'Ход {i+1}', 'info')
     current_field = Solver.make_random_move(current_field)
-    current_field = Solver.make_turn(solver, current_field)
-    solver.output(current_field)
+    current_field = Solver.make_turn(_solver, current_field)
+    _solver.output(current_field)
 '''
 
 
