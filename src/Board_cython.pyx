@@ -1,6 +1,12 @@
 import copy
+from Board import Board
+import time
 import numpy as np
+cimport numpy as cnp
 
+cnp.import_array()
+DTYPE = np.int64
+ctypedef cnp.int64_t DTYPE_t
 
 class Board:
     # black is an opponent, our bot goes white (no racism)
@@ -11,9 +17,10 @@ class Board:
     @staticmethod
     def remove_stone(matrix, posX, posY):
         matrix[posY][posX] = 0
+        
     @staticmethod
-    def clone_matrix(matrix):
-        return copy.deepcopy(matrix)
+    def clone_matrix(cnp.ndarray matrix):
+        return matrix.copy()
 
     @staticmethod
     #@numba.njit(parallel=True)

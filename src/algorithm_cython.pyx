@@ -1,7 +1,126 @@
-from Board import Board
 import time
+import numpy as np
+cimport numpy as cnp
+#from Board import Board
+cnp.import_array()
 
-class Minimax:
+from libc.time cimport time, time_t
+#from posix.time cimport clock_gettime, timespec, CLOCK_REALTIME
+
+DTYPE = np.int64
+ctypedef cnp.int64_t DTYPE_t
+
+#from libcpp cimport bool
+
+cdef class Board:
+    # black is an opponent, our bot goes white (no racism)
+    @staticmethod
+    cdef add_stone(cnp.ndarray matrix, int posX,int posY, int black):
+        matrix[posY][posX] = 2 if black else 1
+
+    @staticmethod
+    cdef remove_stone(cnp.ndarray matrix, int posX,int posY):
+        matrix[posY][posX] = 0
+        
+    @staticmethod
+    cdef clone_matrix(cnp.ndarray matrix):
+        return matrix.copy()
+
+    @staticmethod
+    #@numba.njit(parallel=True)
+    def str_to_matrix(str str_field):
+
+        cdef cnp.ndarray matrix = np.zeros((19, 19))
+        cdef int idx = 0
+        cdef str symb = ''
+        cdef int i = 0
+        cdef int j = 0
+        for i in range(19):
+            j = 0
+            for j in range(19):
+                # i*19 + j
+                idx = i*19+j
+                symb = str_field[idx]
+                if (symb=='x'):
+                        matrix[i][j] = 2
+                elif (symb=='o'):
+                        matrix[i][j] = 1
+        return matrix
+
+    @staticmethod
+    #@numba.njit(parallel=True)
+    def matrix_to_str(cnp.ndarray matrix):
+        cdef str str_field = ''
+        cdef int idx = 0
+        cdef int num = 0
+
+        cdef int i = 0
+        cdef int j = 0
+        for i in range(19):
+            j = 0
+            for j in range(19):
+                # i*19 + j
+                idx = i * 19 + j
+                num = matrix[i][j]
+                if (num==2):
+                        str_field += 'x'
+                elif (num==1):
+                        str_field += 'o';
+                else:
+                        str_field += '_';
+        return str_field
+
+    @staticmethod
+    cdef generate_moves(cnp.ndarray board_matrix):
+        cdef list move_list = []
+        cdef int board_size = len(board_matrix)
+
+        # Look for cells that have at least one stone in an adjacent cell.
+        cdef list move = [0, 0]
+        cdef int i = 0
+        cdef int j = 0
+        for i in range(board_size):
+            j = 0
+            for j in range(board_size):
+                if board_matrix[i][j] > 0:
+                    continue
+
+                if i > 0:
+                    if j > 0:
+                        if board_matrix[i - 1][j - 1] > 0 or board_matrix[i][j - 1] > 0:
+                            move = [i, j]
+                            move_list.append(move)
+                            continue
+                    if j < board_size - 1:
+                        if board_matrix[i - 1][j + 1] > 0 or board_matrix[i][j + 1] > 0:
+                            move = [i, j]
+                            move_list.append(move)
+                            continue
+                    if board_matrix[i - 1][j] > 0:
+                        move = [i, j]
+                        move_list.append(move)
+                        continue
+
+                if i < board_size - 1:
+                    if j > 0:
+                        if board_matrix[i + 1][j - 1] > 0 or board_matrix[i][j - 1] > 0:
+                            move = [i, j]
+                            move_list.append(move)
+                            continue
+                    if j < board_size - 1:
+                        if board_matrix[i + 1][j + 1] > 0 or board_matrix[i][j + 1] > 0:
+                            move = [i, j]
+                            move_list.append(move)
+                            continue
+                    if board_matrix[i + 1][j] > 0:
+                        move = [i, j]
+                        move_list.append(move)
+                        continue
+
+        return move_list
+
+
+cdef class Minimax:
     WIN_SCORE = 100_000_000
     @staticmethod
     def get_win_score():
@@ -13,11 +132,11 @@ class Minimax:
     // This value will be used as the score in the Minimax algorithm.
     '''
     @staticmethod
-    def evaluate_board_for_white(board, blackTurn: bool):
+    cdef evaluate_board_for_white(cnp.ndarray board_matrix, int blackTurn):
         #self.evaluationCount+=1
 
-        blackScore = Minimax.get_score(board, True, blackTurn)
-        whiteScore = Minimax.get_score(board, False, blackTurn)
+        cdef float blackScore = Minimax.get_score(board_matrix, 1, blackTurn)
+        cdef float whiteScore = Minimax.get_score(board_matrix, 0, blackTurn)
 
         if (blackScore==0):
             blackScore = 1.0
@@ -27,52 +146,58 @@ class Minimax:
 
     '''
     // This function calculates the board_matrix score of the specified player.
-    // (i.e. How good a player's general standing on the board_matrix by considering how many 
+    // (i.e. How good a player's general standing on the board_matrix by considering how many
     //  consecutive 2's, 3's, 4's it has, how many of them are blocked etc...)
     '''
     @staticmethod
-    def get_score(boardMatrix, forBlack: bool, blacksTurn: bool):
+    cdef get_score(cnp.ndarray boardMatrix, int forBlack, int blacksTurn):
         # Read the board_matrix
 
         # Calculate score for each of the 3 directions
-        return Minimax.evaluate_horizontal(boardMatrix, forBlack, blacksTurn) + \
-                Minimax.evaluate_vertical(boardMatrix, forBlack, blacksTurn) + \
-                Minimax.evaluate_diagonal(boardMatrix, forBlack, blacksTurn)
+        return (Minimax.evaluate_horizontal(boardMatrix, forBlack, blacksTurn) +
+                Minimax.evaluate_vertical(boardMatrix, forBlack, blacksTurn) +
+                Minimax.evaluate_diagonal(boardMatrix, forBlack, blacksTurn))
 
 
 
     # This function is used to get the next intelligent move to make for the AI.
     #@numba.njit(parallel=True)
     @staticmethod
-    def calculate_next_move(matrix, depth):
+    def calculate_next_move(cnp.ndarray matrix, int depth):
         # Block the board_matrix for AI to make a decision.
-        move = [0, 0]
+        cdef int[2] move = [0, 0]
 
         # Used for benchmarking purposes only.
-        startTime = time.time()
-
+        '''
+        cdef timespec ts
+        cdef double start_time, current_time
+        clock_gettime(CLOCK_REALTIME, &ts)
+        start_time = ts.tv_sec + (ts.tv_nsec / 1000000000.)
+        '''
+        #cdef time_t start_time = time(NULL)
         # Check if any available move can finish the game to make sure the AI always
         # takes the opportunity to finish the game.
-        bestMove = Minimax.search_winning_move(matrix)
+        cdef list bestMove = Minimax.search_winning_move(matrix)
 
-        if bestMove != None:
+        if len(bestMove) <= 1:
             # Finishing move is found.
             move[0] = bestMove[1]
             move[1] = bestMove[2]
         else:
-            tmp_board_matrix = Board.clone_matrix(matrix)
+            tmp_board_matrix = cnp.ndarray.copy(matrix) #Board.clone_matrix(matrix)
 
             # If there is no such move, search the minimax tree with specified depth.
-            bestMove = Minimax.minimax_search_ab(depth, tmp_board_matrix, True, -1.0, Minimax.get_win_score())
-            if bestMove[1] == None:
-                move = None
+            bestMove = Minimax.minimax_search_ab(depth, tmp_board_matrix, 1, -1.0, Minimax.WIN_SCORE)
+            if bestMove[1] == 0.:
+                move = {0,0}
             else:
                 move[0] = bestMove[1]
                 move[1] = bestMove[2]
-
+        #clock_gettime(CLOCK_REALTIME, &ts)
+        #cdef time_t current_time = time(NULL)
         # print("Cases calculated: " + str(self.evaluationCount) + "
-        print("Calculation time: " + str(
-            int((time.time() - startTime) * 1000)) + " ms")
+        #print("Calculation time: " + str(
+        #    int((current_time - start_time) * 1000)) + " ms")
         return move
 
     """
@@ -82,40 +207,47 @@ class Minimax:
     """
     @staticmethod
     #@numba.njit(parallel=True)
-    def minimax_search_ab(depth, dummy_board_matrix, max_player, alpha, beta):
-
+    #cdef minimax_search_ab(int depth, vector [vector[int]] dummy_board_matrix, bool max_player, int alpha, int beta):
+    cdef minimax_search_ab(int depth, cnp.ndarray dummy_board_matrix, int max_player,double alpha, double beta):
         # Last depth (terminal node), evaluate the current board_matrix score.
         if depth == 0:
-            return [Minimax.evaluate_board_for_white(dummy_board_matrix, not max_player), None, None]
+            #cdef int[4] ans = {Minimax.evaluate_board_for_white(dummy_board_matrix, not max_player), None, None}
+            #return ans
+            ans = [Minimax.evaluate_board_for_white(dummy_board_matrix, not max_player), 0, 0]
+            return ans
+
 
         # Generate all possible moves from this node of the Minimax Tree
-        all_possible_moves = Board.generate_moves(dummy_board_matrix)
+        cdef list all_possible_moves = Board.generate_moves(dummy_board_matrix)
 
         # If there are no possible moves left, treat this node as a terminal node and return the score.
         if len(all_possible_moves) == 0:
-            return [Minimax.evaluate_board_for_white(dummy_board_matrix, not max_player), None, None]
+            tmp_arr = [Minimax.evaluate_board_for_white(dummy_board_matrix, not max_player), 0, 0]
 
-        best_move = [None, None, None]
+            return tmp_arr
+
+        cdef float[3] best_move = [0., 0., 0.]
+        cdef float[3] temp_move = [0., 0., 0.]
         # Generate Minimax Tree and calculate node scores.
         if max_player:
             # Initialize the starting best move with -infinity.
-            best_move[0] = -1.0
+            best_move[0] = -1
 
             # Iterate for all possible moves that can be made.
             for move in all_possible_moves:
 
                 # Play the move on the temporary board_matrix without drawing anything.
-                Board.add_stone(dummy_board_matrix, move[1], move[0], False)
+                Board.add_stone(dummy_board_matrix, move[1], move[0], 0)
 
                 # Call the minimax function for the next depth, to look for a minimum score.
                 '''
                 // Call the minimax function for the next depth, to look for a minimum score.
-                // This function recursively generates new Minimax trees branching from this node 
+                // This function recursively generates new Minimax trees branching from this node
                 // (if the depth > 0) and searches for the minimum white score in each of the sub trees.
                 // We will find the maximum score of this depth, among the minimum scores found in the
                 // lower depth.
                 '''
-                temp_move = Minimax.minimax_search_ab(depth - 1, dummy_board_matrix, False, alpha, beta)
+                temp_move = Minimax.minimax_search_ab(depth - 1, dummy_board_matrix, 0, alpha, beta)
 
                 # Backtrack and remove.
                 Board.remove_stone(dummy_board_matrix, move[1], move[0])
@@ -123,10 +255,10 @@ class Minimax:
                 # Updating alpha (alpha value holds the maximum score)
                 '''
                 // Updating alpha (alpha value holds the maximum score)
-                // When searching for the minimum, if the score of a node is lower than the alpha 
+                // When searching for the minimum, if the score of a node is lower than the alpha
                 // (max score of uncle nodes from one upper level) the whole subtree originating
-                // from that node will be discarded, since the maximizing player will choose the 
-                // alpha node over any node with a score lower than the alpha. 
+                // from that node will be discarded, since the maximizing player will choose the
+                // alpha node over any node with a score lower than the alpha.
                 '''
                 if temp_move[0] > alpha:
                     alpha = temp_move[0]
@@ -136,7 +268,7 @@ class Minimax:
                 // Beta value holds the minimum score among the uncle nodes from one upper level.
                 // We need to find a score lower than this beta score, because any score higher than
                 // beta will be eliminated by the minimizing player (upper level). If the score is
-                // higher than (or equal to) beta, break out of loop discarding any remaining nodes 
+                // higher than (or equal to) beta, break out of loop discarding any remaining nodes
                 // and/or subtrees and return the last move.
                 '''
                 if temp_move[0] >= beta:
@@ -150,7 +282,7 @@ class Minimax:
 
         else:
             # Initialize the starting best move using the first move in the list and +infinity score.
-            best_move[0] = 100_000_000.0
+            best_move[0] = 100_000_000
             best_move[1] = all_possible_moves[0][0]
             best_move[2] = all_possible_moves[0][1]
 
@@ -158,25 +290,25 @@ class Minimax:
             for move in all_possible_moves:
 
                 # Play the move on the temporary board_matrix without drawing anything.
-                Board.add_stone(dummy_board_matrix, move[1], move[0], True)
+                Board.add_stone(dummy_board_matrix, move[1], move[0], 1)
 
                 '''
                 // Call the minimax function for the next depth, to look for a maximum score.
-                // This function recursively generates new Minimax trees branching from this node 
+                // This function recursively generates new Minimax trees branching from this node
                 // (if the depth > 0) and searches for the maximum white score in each of the sub trees.
                 // We will find the minimum score of this depth, among the maximum scores found in the
                 // lower depth.
                 '''
-                temp_move = Minimax.minimax_search_ab(depth - 1, dummy_board_matrix, True, alpha, beta)
+                temp_move = Minimax.minimax_search_ab(depth - 1, dummy_board_matrix, 1, alpha, beta)
 
                 Board.remove_stone(dummy_board_matrix, move[1], move[0])
 
                 '''
                 // Updating beta (beta value holds the minimum score)
-                // When searching for the maximum, if the score of a node is higher than the beta 
+                // When searching for the maximum, if the score of a node is higher than the beta
                 // (min score of uncle nodes from one upper level) the whole subtree originating
-                // from that node will be discarded, since the minimizing player will choose the 
-                // beta node over any node with a score higher than the beta. 
+                // from that node will be discarded, since the minimizing player will choose the
+                // beta node over any node with a score higher than the beta.
                 '''
                 beta = min(temp_move[0], beta)
 
@@ -185,7 +317,7 @@ class Minimax:
                 // Alpha value holds the maximum score among the uncle nodes from one upper level.
                 // We need to find a score higher than this alpha score, because any score lower than
                 // alpha will be eliminated by the maximizing player (upper level). If the score is
-                // lower than (or equal to) alpha, break out of loop discarding any remaining nodes 
+                // lower than (or equal to) alpha, break out of loop discarding any remaining nodes
                 // and/or subtrees and return the last move.
                 '''
                 if temp_move[0] <= alpha:
@@ -201,30 +333,31 @@ class Minimax:
 
 
     @staticmethod
-    def search_winning_move(board_matrix):
+    cdef search_winning_move(cnp.ndarray board_matrix):
 
-        all_possible_moves = Board.generate_moves(board_matrix)
-        winning_move = [None, None, None]
+        cdef list all_possible_moves = Board.generate_moves(board_matrix)
+        cdef float[3] winning_move = [0, 0, 0]
 
+        cdef cnp.ndarray dummy_board
         for move in all_possible_moves:
             # Create a temporary board_matrix that is equivalent to the current board_matrix
             dummy_board = Board.clone_matrix(board_matrix)
             # Play the move on that temporary board_matrix without drawing anything
-            Board.add_stone(dummy_board, move[1], move[0], False)
+            Board.add_stone(dummy_board, move[1], move[0], 0)
 
             # If the white player has a winning score in that temporary board_matrix, return the move.
-            if Minimax.get_score(dummy_board, False, False) >= Minimax.WIN_SCORE:
+            if Minimax.get_score(dummy_board, 0, 0) >= Minimax.WIN_SCORE:
                 winning_move[1] = move[0]
                 winning_move[2] = move[1]
                 return winning_move
 
-        return None
+        return [0]
 
     # This function calculates the score by evaluating the stone positions in horizontal direction
     @staticmethod
-    def evaluate_horizontal(boardMatrix, forBlack: bool, playersTurn: bool):
+    cdef evaluate_horizontal(cnp.ndarray boardMatrix, int forBlack, int playersTurn):
 
-        evaluations = [0, 2, 0] # [0] -> consecutive count, [1] -> block count, [2] -> score
+        cdef float[3] evaluations = [0, 2, 0] # [0] -> consecutive count, [1] -> block count, [2] -> score
         '''
         // blocks variable is used to check if a consecutive stone set is blocked by the opponent or
         // the board_matrix border. If the both sides of a consecutive set is blocked, blocks variable will be 2
@@ -234,11 +367,13 @@ class Minimax:
         // If the first cell is empty, block count will be decremented by 1.
         // If there is another empty cell after a consecutive stones set, block count will again be
         // decremented by 1.
-        // 
+        //
         Iterate over all rows '''
-
+        cdef int i = 0
+        cdef int j = 0
         for i in range(len(boardMatrix)):
             #// Iterate over all cells in a row
+            j = 0
             for j in range( len(boardMatrix[0])):
                 #// Check if the selected player has a stone in the current cell
                 Minimax.evaluate_directions(boardMatrix, i, j, forBlack, playersTurn, evaluations)
@@ -253,30 +388,41 @@ class Minimax:
     '''
 
     @staticmethod
-    def evaluate_vertical(boardMatrix, forBlack:bool, playersTurn:bool):
-        evaluations = [0, 2, 0] # [0] -> consecutive count, [1] -> block count, [2] -> score
-
+    cdef evaluate_vertical(cnp.ndarray boardMatrix, int forBlack,int playersTurn):
+        cdef float[3] evaluations = [0, 2, 0] # [0] -> consecutive count, [1] -> block count, [2] -> score
+        cdef int j = 0
+        cdef int i = 0
         for j in range(len(boardMatrix[0])):
+            i = 0
             for i in range(len(boardMatrix)):
                 Minimax.evaluate_directions(boardMatrix, i, j, forBlack, playersTurn, evaluations)
             Minimax.evaluate_directions_after_one_pass(evaluations, forBlack, playersTurn)
         return evaluations[2]
 
     @staticmethod
-    def evaluate_diagonal(boardMatrix, forBlack, playersTurn):
-        evaluations = [0, 2, 0]  # [0] -> consecutive count, [1] -> block count, [2] -> score
+    cdef evaluate_diagonal(cnp.ndarray boardMatrix, int forBlack, int playersTurn):
+        cdef float[3] evaluations = [0, 2, 0]  # [0] -> consecutive count, [1] -> block count, [2] -> score
         # From bottom-left to top-right diagonally
+        cdef int iStart = 0
+        cdef int iEnd = 0
+
+        cdef int i = 0
+        cdef int k = 0
         for k in range(0, 2 * (len(boardMatrix) - 1) + 1):
             iStart = max(0, k - len(boardMatrix) + 1)
             iEnd = min(len(boardMatrix) - 1, k)
+            i = 0
             for i in range(iStart, iEnd + 1):
                 Minimax.evaluate_directions(boardMatrix, i, k - i, forBlack, playersTurn, evaluations)
             Minimax.evaluate_directions_after_one_pass(evaluations, forBlack, playersTurn)
 
         # From top-left to bottom-right diagonally
+        i = 0
+        k = 0
         for k in range(1 - len(boardMatrix), len(boardMatrix)):
             iStart = max(0, k)
             iEnd = min(len(boardMatrix) + k - 1, len(boardMatrix) - 1)
+            i = 0
             for i in range(iStart, iEnd + 1):
                 Minimax.evaluate_directions(boardMatrix, i, i - k, forBlack, playersTurn, evaluations)
             Minimax.evaluate_directions_after_one_pass(evaluations, forBlack, playersTurn)
@@ -284,7 +430,7 @@ class Minimax:
         return evaluations[2]
 
     @staticmethod
-    def evaluate_directions(boardMatrix, i, j, isBot, botsTurn, eval):
+    cdef evaluate_directions(cnp.ndarray boardMatrix, int i,int j, int isBot,int botsTurn,list eval):
         # Check if the selected player has a stone in the current cell
         if boardMatrix[i][j] == (2 if isBot else 1):
             # Increment consecutive stones count
@@ -317,7 +463,7 @@ class Minimax:
             eval[1] = 2
 
     @staticmethod
-    def evaluate_directions_after_one_pass(eval, isBot, playersTurn):
+    cdef evaluate_directions_after_one_pass(list eval,int isBot, int playersTurn):
         # End of row, check if there were any consecutive stones before we reached right border
         if eval[0] > 0:
             eval[2] += Minimax.get_consecutive_set_score(eval[0], eval[1], isBot == playersTurn)
@@ -330,8 +476,8 @@ class Minimax:
     # count: Number of consecutive stones in the set
     # blocks: Number of blocked sides of the set (2: both sides blocked, 1: single side blocked, 0: both sides free)
     @staticmethod
-    def get_consecutive_set_score(count, blocks, currentTurn):
-        winGuarantee = 1000000
+    cdef get_consecutive_set_score(int count, int blocks,int currentTurn):
+        cdef int winGuarantee = 1000000
 
         # If both sides of a set are blocked, this set is worthless return 0 points.
         if blocks == 2 and count < 5:
@@ -392,3 +538,7 @@ class Minimax:
         # More than 5 consecutive stones?
         return Minimax.WIN_SCORE * 2
 
+
+
+#if __name__=="main":
+#    Minimax.calculate_next_move()
