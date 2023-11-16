@@ -1,6 +1,14 @@
-from algorithm import Minimax
+#from algorithm import Minimax
+from Cython.Build import cythonize
+import distutils
+import pyximport
+pyximport.install()
+from algorithm_cython import Minimax
+
 from Board import Board
 import random
+
+
 
 class Test:
     @staticmethod
