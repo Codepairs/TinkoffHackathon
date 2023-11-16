@@ -1,7 +1,7 @@
 import time
 import numpy as np
 cimport numpy as cnp
-from Board import Board
+#from Board import Board
 cnp.import_array()
 
 
@@ -9,25 +9,27 @@ DTYPE = np.int64
 ctypedef cnp.int64_t DTYPE_t
 
 #from libcpp cimport bool
-'''
-class Board:
+
+cdef class Board:
     # black is an opponent, our bot goes white (no racism)
     @staticmethod
-    def add_stone(matrix, posX, posY, int black):
+    cdef add_stone(cnp.ndarray matrix, int posX,int posY, int black):
         matrix[posY][posX] = 2 if black else 1
 
     @staticmethod
-    def remove_stone(matrix, posX, posY):
+    cdef remove_stone(cnp.ndarray matrix, int posX,int posY):
         matrix[posY][posX] = 0
         
     @staticmethod
-    def clone_matrix(cnp.ndarray matrix):
+    cdef clone_matrix(cnp.ndarray matrix):
         return matrix.copy()
 
     @staticmethod
     #@numba.njit(parallel=True)
     def str_to_matrix(str str_field):
-        cdef matrix = cnp.zeros((19, 19))
+        cdef cnp.ndarray matrix = np.zeros((19, 19))
+        cdef int idx = 0
+        cdef str symb = ''
         for i in range(19):
             for j in range(19):
                 # i*19 + j
@@ -42,7 +44,9 @@ class Board:
     @staticmethod
     #@numba.njit(parallel=True)
     def matrix_to_str(cnp.ndarray matrix):
-        str_field = ''
+        cdef str str_field = ''
+        cdef int idx = 0
+        cdef int num = 0
         for i in range(19):
             for j in range(19):
                 # i*19 + j
@@ -57,11 +61,12 @@ class Board:
         return str_field
 
     @staticmethod
-    def generate_moves(board_matrix):
-        move_list = []
-        board_size = len(board_matrix)
+    cdef generate_moves(cnp.ndarray board_matrix):
+        cdef list move_list = []
+        cdef int board_size = len(board_matrix)
 
         # Look for cells that have at least one stone in an adjacent cell.
+        cdef list move = [0, 0]
         for i in range(board_size):
             for j in range(board_size):
                 if board_matrix[i][j] > 0:
@@ -100,7 +105,7 @@ class Board:
                         continue
 
         return move_list
-'''
+
 
 cdef class Minimax:
     WIN_SCORE = 100_000_000
@@ -132,7 +137,7 @@ cdef class Minimax:
     //  consecutive 2's, 3's, 4's it has, how many of them are blocked etc...)
     '''
     @staticmethod
-    def get_score(cnp.ndarray boardMatrix, int forBlack, int blacksTurn):
+    cdef get_score(cnp.ndarray boardMatrix, int forBlack, int blacksTurn):
         # Read the board_matrix
 
         # Calculate score for each of the 3 directions
@@ -161,7 +166,7 @@ cdef class Minimax:
             move[0] = bestMove[1]
             move[1] = bestMove[2]
         else:
-            tmp_board_matrix = np.ndarray.copy(matrix) #Board.clone_matrix(matrix)
+            tmp_board_matrix = cnp.ndarray.copy(matrix) #Board.clone_matrix(matrix)
 
             # If there is no such move, search the minimax tree with specified depth.
             bestMove = Minimax.minimax_search_ab(depth, tmp_board_matrix, 1, -1.0, Minimax.WIN_SCORE)
@@ -309,11 +314,12 @@ cdef class Minimax:
 
 
     @staticmethod
-    def search_winning_move(board_matrix):
+    cdef search_winning_move(cnp.ndarray board_matrix):
 
-        all_possible_moves = Board.generate_moves(board_matrix)
-        winning_move = [0, 0, 0]
+        cdef list all_possible_moves = Board.generate_moves(board_matrix)
+        cdef float[3] winning_move = [0, 0, 0]
 
+        cdef cnp.ndarray dummy_board
         for move in all_possible_moves:
             # Create a temporary board_matrix that is equivalent to the current board_matrix
             dummy_board = Board.clone_matrix(board_matrix)
@@ -330,9 +336,9 @@ cdef class Minimax:
 
     # This function calculates the score by evaluating the stone positions in horizontal direction
     @staticmethod
-    def evaluate_horizontal(boardMatrix, int forBlack, int playersTurn):
+    cdef evaluate_horizontal(cnp.ndarray boardMatrix, int forBlack, int playersTurn):
 
-        evaluations = [0, 2, 0] # [0] -> consecutive count, [1] -> block count, [2] -> score
+        cdef float[3] evaluations = [0, 2, 0] # [0] -> consecutive count, [1] -> block count, [2] -> score
         '''
         // blocks variable is used to check if a consecutive stone set is blocked by the opponent or
         // the board_matrix border. If the both sides of a consecutive set is blocked, blocks variable will be 2
@@ -361,8 +367,8 @@ cdef class Minimax:
     '''
 
     @staticmethod
-    def evaluate_vertical(boardMatrix, int forBlack,int playersTurn):
-        evaluations = [0, 2, 0] # [0] -> consecutive count, [1] -> block count, [2] -> score
+    cdef evaluate_vertical(cnp.ndarray boardMatrix, int forBlack,int playersTurn):
+        cdef float[3] evaluations = [0, 2, 0] # [0] -> consecutive count, [1] -> block count, [2] -> score
 
         for j in range(len(boardMatrix[0])):
             for i in range(len(boardMatrix)):
@@ -371,9 +377,12 @@ cdef class Minimax:
         return evaluations[2]
 
     @staticmethod
-    def evaluate_diagonal(boardMatrix, forBlack, playersTurn):
-        evaluations = [0, 2, 0]  # [0] -> consecutive count, [1] -> block count, [2] -> score
+    cdef evaluate_diagonal(cnp.ndarray boardMatrix, int forBlack, int playersTurn):
+        cdef float[3] evaluations = [0, 2, 0]  # [0] -> consecutive count, [1] -> block count, [2] -> score
         # From bottom-left to top-right diagonally
+        cdef int iStart = 0
+        cdef int iEnd = 0
+
         for k in range(0, 2 * (len(boardMatrix) - 1) + 1):
             iStart = max(0, k - len(boardMatrix) + 1)
             iEnd = min(len(boardMatrix) - 1, k)
@@ -382,6 +391,7 @@ cdef class Minimax:
             Minimax.evaluate_directions_after_one_pass(evaluations, forBlack, playersTurn)
 
         # From top-left to bottom-right diagonally
+        
         for k in range(1 - len(boardMatrix), len(boardMatrix)):
             iStart = max(0, k)
             iEnd = min(len(boardMatrix) + k - 1, len(boardMatrix) - 1)
@@ -392,7 +402,7 @@ cdef class Minimax:
         return evaluations[2]
 
     @staticmethod
-    def evaluate_directions(boardMatrix, i, j, isBot, botsTurn, eval):
+    cdef evaluate_directions(cnp.ndarray boardMatrix, int i,int j, int isBot,int botsTurn,list eval):
         # Check if the selected player has a stone in the current cell
         if boardMatrix[i][j] == (2 if isBot else 1):
             # Increment consecutive stones count
@@ -425,7 +435,7 @@ cdef class Minimax:
             eval[1] = 2
 
     @staticmethod
-    def evaluate_directions_after_one_pass(eval, isBot, playersTurn):
+    cdef evaluate_directions_after_one_pass(list eval,int isBot, int playersTurn):
         # End of row, check if there were any consecutive stones before we reached right border
         if eval[0] > 0:
             eval[2] += Minimax.get_consecutive_set_score(eval[0], eval[1], isBot == playersTurn)
@@ -438,8 +448,8 @@ cdef class Minimax:
     # count: Number of consecutive stones in the set
     # blocks: Number of blocked sides of the set (2: both sides blocked, 1: single side blocked, 0: both sides free)
     @staticmethod
-    def get_consecutive_set_score(count, blocks, currentTurn):
-        winGuarantee = 1000000
+    cdef get_consecutive_set_score(int count, int blocks,int currentTurn):
+        cdef int winGuarantee = 1000000
 
         # If both sides of a set are blocked, this set is worthless return 0 points.
         if blocks == 2 and count < 5:

@@ -3,9 +3,9 @@ from Cython.Build import cythonize
 import distutils
 import pyximport
 pyximport.install()
-from algorithm_cython import Minimax
+from algorithm_cython import Minimax, Board
 
-from Board import Board
+#from Board import Board
 import random
 
 
@@ -14,7 +14,7 @@ class Test:
     @staticmethod
     def make_algo_move(string_field):
         matrix = Board.str_to_matrix(string_field)
-        x, y = Minimax.calculate_next_move(matrix, depth=3)
+        x, y = Minimax.calculate_next_move(matrix, depth=2)
 
         string_field = Board.matrix_to_str(matrix)
         string_field = string_field[:x * 19 + y] + 'x' + string_field[x * 19 + y + 1:]
