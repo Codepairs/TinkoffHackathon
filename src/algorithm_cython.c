@@ -2397,18 +2397,18 @@ static int __Pyx_CheckKeywordStrings(PyObject *kw, const char* function_name, in
 /* GetAttr3.proto */
 static CYTHON_INLINE PyObject *__Pyx_GetAttr3(PyObject *, PyObject *, PyObject *);
 
+/* ModInt[long].proto */
+static CYTHON_INLINE long __Pyx_mod_long(long, long);
+
+/* PyIntCompare.proto */
+static CYTHON_INLINE int __Pyx_PyInt_BoolNeObjC(PyObject *op1, PyObject *op2, long intval, long inplace);
+
 /* BufferIndexError.proto */
 static void __Pyx_RaiseBufferIndexError(int axis);
 
 #define __Pyx_BufPtrStrided1d(type, buf, i0, s0) (type)((char*)buf + i0 * s0)
 /* BufferFallbackError.proto */
 static void __Pyx_RaiseBufferFallbackError(void);
-
-/* ModInt[long].proto */
-static CYTHON_INLINE long __Pyx_mod_long(long, long);
-
-/* PyIntCompare.proto */
-static CYTHON_INLINE int __Pyx_PyInt_BoolNeObjC(PyObject *op1, PyObject *op2, long intval, long inplace);
 
 /* PyIntCompare.proto */
 static CYTHON_INLINE int __Pyx_PyInt_BoolEqObjC(PyObject *op1, PyObject *op2, long intval, long inplace);
@@ -3156,6 +3156,8 @@ static const char __pyx_k_import[] = "__import__";
 static const char __pyx_k_matrix[] = "matrix";
 static const char __pyx_k_op_fig[] = "op_fig";
 static const char __pyx_k_pickle[] = "pickle";
+static const char __pyx_k_rand_x[] = "rand_x";
+static const char __pyx_k_rand_y[] = "rand_y";
 static const char __pyx_k_reduce[] = "__reduce__";
 static const char __pyx_k_update[] = "update";
 static const char __pyx_k_Minimax[] = "Minimax";
@@ -3433,6 +3435,8 @@ typedef struct {
   PyObject *__pyx_n_s_pyx_unpickle_Board;
   PyObject *__pyx_n_s_pyx_unpickle_Minimax;
   PyObject *__pyx_n_s_pyx_vtable;
+  PyObject *__pyx_n_s_rand_x;
+  PyObject *__pyx_n_s_rand_y;
   PyObject *__pyx_n_s_range;
   PyObject *__pyx_n_s_reduce;
   PyObject *__pyx_n_s_reduce_cython;
@@ -3608,6 +3612,8 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_pyx_unpickle_Board);
   Py_CLEAR(clear_module_state->__pyx_n_s_pyx_unpickle_Minimax);
   Py_CLEAR(clear_module_state->__pyx_n_s_pyx_vtable);
+  Py_CLEAR(clear_module_state->__pyx_n_s_rand_x);
+  Py_CLEAR(clear_module_state->__pyx_n_s_rand_y);
   Py_CLEAR(clear_module_state->__pyx_n_s_range);
   Py_CLEAR(clear_module_state->__pyx_n_s_reduce);
   Py_CLEAR(clear_module_state->__pyx_n_s_reduce_cython);
@@ -3761,6 +3767,8 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_pyx_unpickle_Board);
   Py_VISIT(traverse_module_state->__pyx_n_s_pyx_unpickle_Minimax);
   Py_VISIT(traverse_module_state->__pyx_n_s_pyx_vtable);
+  Py_VISIT(traverse_module_state->__pyx_n_s_rand_x);
+  Py_VISIT(traverse_module_state->__pyx_n_s_rand_y);
   Py_VISIT(traverse_module_state->__pyx_n_s_range);
   Py_VISIT(traverse_module_state->__pyx_n_s_reduce);
   Py_VISIT(traverse_module_state->__pyx_n_s_reduce_cython);
@@ -4022,6 +4030,8 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_pyx_unpickle_Board __pyx_mstate_global->__pyx_n_s_pyx_unpickle_Board
 #define __pyx_n_s_pyx_unpickle_Minimax __pyx_mstate_global->__pyx_n_s_pyx_unpickle_Minimax
 #define __pyx_n_s_pyx_vtable __pyx_mstate_global->__pyx_n_s_pyx_vtable
+#define __pyx_n_s_rand_x __pyx_mstate_global->__pyx_n_s_rand_x
+#define __pyx_n_s_rand_y __pyx_mstate_global->__pyx_n_s_rand_y
 #define __pyx_n_s_range __pyx_mstate_global->__pyx_n_s_range
 #define __pyx_n_s_reduce __pyx_mstate_global->__pyx_n_s_reduce
 #define __pyx_n_s_reduce_cython __pyx_mstate_global->__pyx_n_s_reduce_cython
@@ -9006,6 +9016,8 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
 
 static PyObject *__pyx_pf_16algorithm_cython_7Minimax_calculate_next_move(PyArrayObject *__pyx_v_matrix, int __pyx_v_depth) {
   int __pyx_v_move[2];
+  int __pyx_v_rand_x;
+  int __pyx_v_rand_y;
   PyArrayObject *__pyx_v_bestMove = 0;
   PyArrayObject *__pyx_v_tmp_board_matrix = 0;
   __Pyx_LocalBuf_ND __pyx_pybuffernd_bestMove;
@@ -9019,18 +9031,19 @@ static PyObject *__pyx_pf_16algorithm_cython_7Minimax_calculate_next_move(PyArra
   int __pyx_t_1[2];
   PyObject *__pyx_t_2 = NULL;
   PyObject *__pyx_t_3 = NULL;
-  PyObject *__pyx_t_4 = NULL;
-  PyObject *__pyx_t_5 = NULL;
+  int __pyx_t_4;
+  int __pyx_t_5[2];
   PyObject *__pyx_t_6 = NULL;
-  PyArrayObject *__pyx_t_7 = NULL;
-  Py_ssize_t __pyx_t_8;
-  int __pyx_t_9;
+  PyObject *__pyx_t_7 = NULL;
+  PyObject *__pyx_t_8 = NULL;
+  PyArrayObject *__pyx_t_9 = NULL;
   Py_ssize_t __pyx_t_10;
-  int __pyx_t_11;
-  PyArrayObject *__pyx_t_12 = NULL;
-  PyObject *__pyx_t_13 = NULL;
+  Py_ssize_t __pyx_t_11;
+  int __pyx_t_12;
+  PyArrayObject *__pyx_t_13 = NULL;
   PyObject *__pyx_t_14 = NULL;
   PyObject *__pyx_t_15 = NULL;
+  PyObject *__pyx_t_16 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -9057,120 +9070,177 @@ static PyObject *__pyx_pf_16algorithm_cython_7Minimax_calculate_next_move(PyArra
  *     def calculate_next_move(cnp.ndarray[DTYPE_t, ndim = 2] matrix, int depth):
  *         # Block the board_matrix for AI to make a decision.
  *         cdef int[2] move = [0, 0]             # <<<<<<<<<<<<<<
- * 
- *         # Used for benchmarking purposes only.
+ *         cdef int rand_x = rand()%19, rand_y = rand()%19
+ *         while (matrix[rand_y][rand_x]!=0):
  */
   __pyx_t_1[0] = 0;
   __pyx_t_1[1] = 0;
   memcpy(&(__pyx_v_move[0]), __pyx_t_1, sizeof(__pyx_v_move[0]) * (2));
 
-  /* "algorithm_cython.pyx":157
+  /* "algorithm_cython.pyx":146
+ *         # Block the board_matrix for AI to make a decision.
+ *         cdef int[2] move = [0, 0]
+ *         cdef int rand_x = rand()%19, rand_y = rand()%19             # <<<<<<<<<<<<<<
+ *         while (matrix[rand_y][rand_x]!=0):
+ *              rand_x = rand()%19
+ */
+  __pyx_v_rand_x = __Pyx_mod_long(rand(), 19);
+  __pyx_v_rand_y = __Pyx_mod_long(rand(), 19);
+
+  /* "algorithm_cython.pyx":147
+ *         cdef int[2] move = [0, 0]
+ *         cdef int rand_x = rand()%19, rand_y = rand()%19
+ *         while (matrix[rand_y][rand_x]!=0):             # <<<<<<<<<<<<<<
+ *              rand_x = rand()%19
+ *              rand_y = rand()%19
+ */
+  while (1) {
+    __pyx_t_2 = __Pyx_GetItemInt(((PyObject *)__pyx_v_matrix), __pyx_v_rand_y, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 147, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_3 = __Pyx_GetItemInt(__pyx_t_2, __pyx_v_rand_x, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 147, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_t_4 = (__Pyx_PyInt_BoolNeObjC(__pyx_t_3, __pyx_int_0, 0, 0)); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 147, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    if (!__pyx_t_4) break;
+
+    /* "algorithm_cython.pyx":148
+ *         cdef int rand_x = rand()%19, rand_y = rand()%19
+ *         while (matrix[rand_y][rand_x]!=0):
+ *              rand_x = rand()%19             # <<<<<<<<<<<<<<
+ *              rand_y = rand()%19
+ * 
+ */
+    __pyx_v_rand_x = __Pyx_mod_long(rand(), 19);
+
+    /* "algorithm_cython.pyx":149
+ *         while (matrix[rand_y][rand_x]!=0):
+ *              rand_x = rand()%19
+ *              rand_y = rand()%19             # <<<<<<<<<<<<<<
+ * 
+ *         move = [rand_y, rand_x]
+ */
+    __pyx_v_rand_y = __Pyx_mod_long(rand(), 19);
+  }
+
+  /* "algorithm_cython.pyx":151
+ *              rand_y = rand()%19
+ * 
+ *         move = [rand_y, rand_x]             # <<<<<<<<<<<<<<
+ *         # Used for benchmarking purposes only.
+ *         '''
+ */
+  __pyx_t_5[0] = __pyx_v_rand_y;
+  __pyx_t_5[1] = __pyx_v_rand_x;
+  memcpy(&(__pyx_v_move[0]), __pyx_t_5, sizeof(__pyx_v_move[0]) * (2));
+
+  /* "algorithm_cython.pyx":162
  *         # Check if any available move can finish the game to make sure the AI always
  *         # takes the opportunity to finish the game.
  *         cdef cnp.ndarray[DTYPE_t, ndim = 1] bestMove = np.array(Minimax.search_winning_move(matrix), dtype=np.int64)             # <<<<<<<<<<<<<<
  *         cdef cnp.ndarray[DTYPE_t, ndim = 2] tmp_board_matrix
  *         #print(bestMove, move)
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 157, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_array); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 157, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 162, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __pyx_f_16algorithm_cython_7Minimax_search_winning_move(((PyArrayObject *)__pyx_v_matrix)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 157, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_array); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 162, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_4 = PyTuple_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 157, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_4);
-  __Pyx_GIVEREF(__pyx_t_2);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_2)) __PYX_ERR(0, 157, __pyx_L1_error);
-  __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 157, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 157, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_int64); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 157, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_6);
-  __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_dtype, __pyx_t_6) < 0) __PYX_ERR(0, 157, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_4, __pyx_t_2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 157, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+  __pyx_t_3 = __pyx_f_16algorithm_cython_7Minimax_search_winning_move(((PyArrayObject *)__pyx_v_matrix)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 162, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_6 = PyTuple_New(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 162, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_6);
+  __Pyx_GIVEREF(__pyx_t_3);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_3)) __PYX_ERR(0, 162, __pyx_L1_error);
+  __pyx_t_3 = 0;
+  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 162, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_np); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 162, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_7);
+  __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_int64); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 162, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_8);
+  __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_dtype, __pyx_t_8) < 0) __PYX_ERR(0, 162, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+  __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_6, __pyx_t_3); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 162, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_8);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (!(likely(((__pyx_t_6) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_6, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 157, __pyx_L1_error)
-  __pyx_t_7 = ((PyArrayObject *)__pyx_t_6);
+  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  if (!(likely(((__pyx_t_8) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_8, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 162, __pyx_L1_error)
+  __pyx_t_9 = ((PyArrayObject *)__pyx_t_8);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_bestMove.rcbuffer->pybuffer, (PyObject*)__pyx_t_7, &__Pyx_TypeInfo_nn___pyx_t_16algorithm_cython_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_bestMove.rcbuffer->pybuffer, (PyObject*)__pyx_t_9, &__Pyx_TypeInfo_nn___pyx_t_16algorithm_cython_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
       __pyx_v_bestMove = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_bestMove.rcbuffer->pybuffer.buf = NULL;
-      __PYX_ERR(0, 157, __pyx_L1_error)
+      __PYX_ERR(0, 162, __pyx_L1_error)
     } else {__pyx_pybuffernd_bestMove.diminfo[0].strides = __pyx_pybuffernd_bestMove.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_bestMove.diminfo[0].shape = __pyx_pybuffernd_bestMove.rcbuffer->pybuffer.shape[0];
     }
   }
-  __pyx_t_7 = 0;
-  __pyx_v_bestMove = ((PyArrayObject *)__pyx_t_6);
-  __pyx_t_6 = 0;
+  __pyx_t_9 = 0;
+  __pyx_v_bestMove = ((PyArrayObject *)__pyx_t_8);
+  __pyx_t_8 = 0;
 
-  /* "algorithm_cython.pyx":160
+  /* "algorithm_cython.pyx":165
  *         cdef cnp.ndarray[DTYPE_t, ndim = 2] tmp_board_matrix
  *         #print(bestMove, move)
  *         if (len(bestMove) != 0):             # <<<<<<<<<<<<<<
  *             # Finishing move is found.
  *             move[0] = bestMove[1]
  */
-  __pyx_t_8 = PyObject_Length(((PyObject *)__pyx_v_bestMove)); if (unlikely(__pyx_t_8 == ((Py_ssize_t)-1))) __PYX_ERR(0, 160, __pyx_L1_error)
-  __pyx_t_9 = (__pyx_t_8 != 0);
-  if (__pyx_t_9) {
+  __pyx_t_10 = PyObject_Length(((PyObject *)__pyx_v_bestMove)); if (unlikely(__pyx_t_10 == ((Py_ssize_t)-1))) __PYX_ERR(0, 165, __pyx_L1_error)
+  __pyx_t_4 = (__pyx_t_10 != 0);
+  if (__pyx_t_4) {
 
-    /* "algorithm_cython.pyx":162
+    /* "algorithm_cython.pyx":167
  *         if (len(bestMove) != 0):
  *             # Finishing move is found.
  *             move[0] = bestMove[1]             # <<<<<<<<<<<<<<
  *             move[1] = bestMove[2]
  *         else:
  */
-    __pyx_t_10 = 1;
-    __pyx_t_11 = -1;
-    if (__pyx_t_10 < 0) {
-      __pyx_t_10 += __pyx_pybuffernd_bestMove.diminfo[0].shape;
-      if (unlikely(__pyx_t_10 < 0)) __pyx_t_11 = 0;
-    } else if (unlikely(__pyx_t_10 >= __pyx_pybuffernd_bestMove.diminfo[0].shape)) __pyx_t_11 = 0;
-    if (unlikely(__pyx_t_11 != -1)) {
-      __Pyx_RaiseBufferIndexError(__pyx_t_11);
-      __PYX_ERR(0, 162, __pyx_L1_error)
+    __pyx_t_11 = 1;
+    __pyx_t_12 = -1;
+    if (__pyx_t_11 < 0) {
+      __pyx_t_11 += __pyx_pybuffernd_bestMove.diminfo[0].shape;
+      if (unlikely(__pyx_t_11 < 0)) __pyx_t_12 = 0;
+    } else if (unlikely(__pyx_t_11 >= __pyx_pybuffernd_bestMove.diminfo[0].shape)) __pyx_t_12 = 0;
+    if (unlikely(__pyx_t_12 != -1)) {
+      __Pyx_RaiseBufferIndexError(__pyx_t_12);
+      __PYX_ERR(0, 167, __pyx_L1_error)
     }
-    (__pyx_v_move[0]) = (*__Pyx_BufPtrStrided1d(__pyx_t_16algorithm_cython_DTYPE_t *, __pyx_pybuffernd_bestMove.rcbuffer->pybuffer.buf, __pyx_t_10, __pyx_pybuffernd_bestMove.diminfo[0].strides));
+    (__pyx_v_move[0]) = (*__Pyx_BufPtrStrided1d(__pyx_t_16algorithm_cython_DTYPE_t *, __pyx_pybuffernd_bestMove.rcbuffer->pybuffer.buf, __pyx_t_11, __pyx_pybuffernd_bestMove.diminfo[0].strides));
 
-    /* "algorithm_cython.pyx":163
+    /* "algorithm_cython.pyx":168
  *             # Finishing move is found.
  *             move[0] = bestMove[1]
  *             move[1] = bestMove[2]             # <<<<<<<<<<<<<<
  *         else:
  *             tmp_board_matrix = cnp.ndarray.copy(matrix) #Board.clone_matrix(matrix)
  */
-    __pyx_t_10 = 2;
-    __pyx_t_11 = -1;
-    if (__pyx_t_10 < 0) {
-      __pyx_t_10 += __pyx_pybuffernd_bestMove.diminfo[0].shape;
-      if (unlikely(__pyx_t_10 < 0)) __pyx_t_11 = 0;
-    } else if (unlikely(__pyx_t_10 >= __pyx_pybuffernd_bestMove.diminfo[0].shape)) __pyx_t_11 = 0;
-    if (unlikely(__pyx_t_11 != -1)) {
-      __Pyx_RaiseBufferIndexError(__pyx_t_11);
-      __PYX_ERR(0, 163, __pyx_L1_error)
+    __pyx_t_11 = 2;
+    __pyx_t_12 = -1;
+    if (__pyx_t_11 < 0) {
+      __pyx_t_11 += __pyx_pybuffernd_bestMove.diminfo[0].shape;
+      if (unlikely(__pyx_t_11 < 0)) __pyx_t_12 = 0;
+    } else if (unlikely(__pyx_t_11 >= __pyx_pybuffernd_bestMove.diminfo[0].shape)) __pyx_t_12 = 0;
+    if (unlikely(__pyx_t_12 != -1)) {
+      __Pyx_RaiseBufferIndexError(__pyx_t_12);
+      __PYX_ERR(0, 168, __pyx_L1_error)
     }
-    (__pyx_v_move[1]) = (*__Pyx_BufPtrStrided1d(__pyx_t_16algorithm_cython_DTYPE_t *, __pyx_pybuffernd_bestMove.rcbuffer->pybuffer.buf, __pyx_t_10, __pyx_pybuffernd_bestMove.diminfo[0].strides));
+    (__pyx_v_move[1]) = (*__Pyx_BufPtrStrided1d(__pyx_t_16algorithm_cython_DTYPE_t *, __pyx_pybuffernd_bestMove.rcbuffer->pybuffer.buf, __pyx_t_11, __pyx_pybuffernd_bestMove.diminfo[0].strides));
 
-    /* "algorithm_cython.pyx":160
+    /* "algorithm_cython.pyx":165
  *         cdef cnp.ndarray[DTYPE_t, ndim = 2] tmp_board_matrix
  *         #print(bestMove, move)
  *         if (len(bestMove) != 0):             # <<<<<<<<<<<<<<
  *             # Finishing move is found.
  *             move[0] = bestMove[1]
  */
-    goto __pyx_L3;
+    goto __pyx_L5;
   }
 
-  /* "algorithm_cython.pyx":165
+  /* "algorithm_cython.pyx":170
  *             move[1] = bestMove[2]
  *         else:
  *             tmp_board_matrix = cnp.ndarray.copy(matrix) #Board.clone_matrix(matrix)             # <<<<<<<<<<<<<<
@@ -9178,151 +9248,151 @@ static PyObject *__pyx_pf_16algorithm_cython_7Minimax_calculate_next_move(PyArra
  *             # If there is no such move, search the minimax tree with specified depth.
  */
   /*else*/ {
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_5numpy_ndarray), __pyx_n_s_copy); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 165, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_4 = NULL;
-    __pyx_t_11 = 0;
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_5numpy_ndarray), __pyx_n_s_copy); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 170, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_6 = NULL;
+    __pyx_t_12 = 0;
     #if CYTHON_UNPACK_METHODS
-    if (likely(PyMethod_Check(__pyx_t_2))) {
-      __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_2);
-      if (likely(__pyx_t_4)) {
-        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
-        __Pyx_INCREF(__pyx_t_4);
+    if (likely(PyMethod_Check(__pyx_t_3))) {
+      __pyx_t_6 = PyMethod_GET_SELF(__pyx_t_3);
+      if (likely(__pyx_t_6)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+        __Pyx_INCREF(__pyx_t_6);
         __Pyx_INCREF(function);
-        __Pyx_DECREF_SET(__pyx_t_2, function);
-        __pyx_t_11 = 1;
+        __Pyx_DECREF_SET(__pyx_t_3, function);
+        __pyx_t_12 = 1;
       }
     }
     #endif
     {
-      PyObject *__pyx_callargs[2] = {__pyx_t_4, ((PyObject *)__pyx_v_matrix)};
-      __pyx_t_6 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+1-__pyx_t_11, 1+__pyx_t_11);
-      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-      if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 165, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_6);
-      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      PyObject *__pyx_callargs[2] = {__pyx_t_6, ((PyObject *)__pyx_v_matrix)};
+      __pyx_t_8 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_12, 1+__pyx_t_12);
+      __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+      if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 170, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_8);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     }
-    if (!(likely(((__pyx_t_6) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_6, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 165, __pyx_L1_error)
-    __pyx_t_12 = ((PyArrayObject *)__pyx_t_6);
+    if (!(likely(((__pyx_t_8) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_8, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 170, __pyx_L1_error)
+    __pyx_t_13 = ((PyArrayObject *)__pyx_t_8);
     {
       __Pyx_BufFmt_StackElem __pyx_stack[1];
       __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_tmp_board_matrix.rcbuffer->pybuffer);
-      __pyx_t_11 = __Pyx_GetBufferAndValidate(&__pyx_pybuffernd_tmp_board_matrix.rcbuffer->pybuffer, (PyObject*)__pyx_t_12, &__Pyx_TypeInfo_nn___pyx_t_16algorithm_cython_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack);
-      if (unlikely(__pyx_t_11 < 0)) {
-        PyErr_Fetch(&__pyx_t_13, &__pyx_t_14, &__pyx_t_15);
+      __pyx_t_12 = __Pyx_GetBufferAndValidate(&__pyx_pybuffernd_tmp_board_matrix.rcbuffer->pybuffer, (PyObject*)__pyx_t_13, &__Pyx_TypeInfo_nn___pyx_t_16algorithm_cython_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack);
+      if (unlikely(__pyx_t_12 < 0)) {
+        PyErr_Fetch(&__pyx_t_14, &__pyx_t_15, &__pyx_t_16);
         if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_tmp_board_matrix.rcbuffer->pybuffer, (PyObject*)__pyx_v_tmp_board_matrix, &__Pyx_TypeInfo_nn___pyx_t_16algorithm_cython_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
-          Py_XDECREF(__pyx_t_13); Py_XDECREF(__pyx_t_14); Py_XDECREF(__pyx_t_15);
+          Py_XDECREF(__pyx_t_14); Py_XDECREF(__pyx_t_15); Py_XDECREF(__pyx_t_16);
           __Pyx_RaiseBufferFallbackError();
         } else {
-          PyErr_Restore(__pyx_t_13, __pyx_t_14, __pyx_t_15);
+          PyErr_Restore(__pyx_t_14, __pyx_t_15, __pyx_t_16);
         }
-        __pyx_t_13 = __pyx_t_14 = __pyx_t_15 = 0;
+        __pyx_t_14 = __pyx_t_15 = __pyx_t_16 = 0;
       }
       __pyx_pybuffernd_tmp_board_matrix.diminfo[0].strides = __pyx_pybuffernd_tmp_board_matrix.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_tmp_board_matrix.diminfo[0].shape = __pyx_pybuffernd_tmp_board_matrix.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_tmp_board_matrix.diminfo[1].strides = __pyx_pybuffernd_tmp_board_matrix.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_tmp_board_matrix.diminfo[1].shape = __pyx_pybuffernd_tmp_board_matrix.rcbuffer->pybuffer.shape[1];
-      if (unlikely((__pyx_t_11 < 0))) __PYX_ERR(0, 165, __pyx_L1_error)
+      if (unlikely((__pyx_t_12 < 0))) __PYX_ERR(0, 170, __pyx_L1_error)
     }
-    __pyx_t_12 = 0;
-    __pyx_v_tmp_board_matrix = ((PyArrayObject *)__pyx_t_6);
-    __pyx_t_6 = 0;
+    __pyx_t_13 = 0;
+    __pyx_v_tmp_board_matrix = ((PyArrayObject *)__pyx_t_8);
+    __pyx_t_8 = 0;
 
-    /* "algorithm_cython.pyx":168
+    /* "algorithm_cython.pyx":173
  * 
  *             # If there is no such move, search the minimax tree with specified depth.
  *             bestMove = np.array(Minimax.minimax_search_ab(depth, tmp_board_matrix, 1, -1.0, Minimax.get_win_score()), dtype=np.int64)             # <<<<<<<<<<<<<<
  *             #print('Best moves: ')
  *             #print(bestMove)
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_np); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 168, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_array); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 168, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __pyx_t_11 = __pyx_f_16algorithm_cython_7Minimax_get_win_score(); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 168, __pyx_L1_error)
-    __pyx_t_6 = __pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(__pyx_v_depth, ((PyArrayObject *)__pyx_v_tmp_board_matrix), 1, -1.0, __pyx_t_11); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 168, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_4 = PyTuple_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 168, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_GIVEREF(__pyx_t_6);
-    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_6)) __PYX_ERR(0, 168, __pyx_L1_error);
-    __pyx_t_6 = 0;
-    __pyx_t_6 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 168, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_6);
-    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 168, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_n_s_np); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 173, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_8);
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_array); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 173, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_int64); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 168, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_5);
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_dtype, __pyx_t_5) < 0) __PYX_ERR(0, 168, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_4, __pyx_t_6); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 168, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_5);
+    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+    __pyx_t_12 = __pyx_f_16algorithm_cython_7Minimax_get_win_score(); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 173, __pyx_L1_error)
+    __pyx_t_8 = __pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(__pyx_v_depth, ((PyArrayObject *)__pyx_v_tmp_board_matrix), 1, -1.0, __pyx_t_12); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 173, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_8);
+    __pyx_t_6 = PyTuple_New(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 173, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_6);
+    __Pyx_GIVEREF(__pyx_t_8);
+    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_8)) __PYX_ERR(0, 173, __pyx_L1_error);
+    __pyx_t_8 = 0;
+    __pyx_t_8 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 173, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_8);
+    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 173, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_int64); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 173, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    if (PyDict_SetItem(__pyx_t_8, __pyx_n_s_dtype, __pyx_t_7) < 0) __PYX_ERR(0, 173, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+    __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_6, __pyx_t_8); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 173, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_7);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    if (!(likely(((__pyx_t_5) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_5, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 168, __pyx_L1_error)
-    __pyx_t_7 = ((PyArrayObject *)__pyx_t_5);
+    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+    if (!(likely(((__pyx_t_7) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_7, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 173, __pyx_L1_error)
+    __pyx_t_9 = ((PyArrayObject *)__pyx_t_7);
     {
       __Pyx_BufFmt_StackElem __pyx_stack[1];
       __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_bestMove.rcbuffer->pybuffer);
-      __pyx_t_11 = __Pyx_GetBufferAndValidate(&__pyx_pybuffernd_bestMove.rcbuffer->pybuffer, (PyObject*)__pyx_t_7, &__Pyx_TypeInfo_nn___pyx_t_16algorithm_cython_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack);
-      if (unlikely(__pyx_t_11 < 0)) {
-        PyErr_Fetch(&__pyx_t_15, &__pyx_t_14, &__pyx_t_13);
+      __pyx_t_12 = __Pyx_GetBufferAndValidate(&__pyx_pybuffernd_bestMove.rcbuffer->pybuffer, (PyObject*)__pyx_t_9, &__Pyx_TypeInfo_nn___pyx_t_16algorithm_cython_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack);
+      if (unlikely(__pyx_t_12 < 0)) {
+        PyErr_Fetch(&__pyx_t_16, &__pyx_t_15, &__pyx_t_14);
         if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_bestMove.rcbuffer->pybuffer, (PyObject*)__pyx_v_bestMove, &__Pyx_TypeInfo_nn___pyx_t_16algorithm_cython_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
-          Py_XDECREF(__pyx_t_15); Py_XDECREF(__pyx_t_14); Py_XDECREF(__pyx_t_13);
+          Py_XDECREF(__pyx_t_16); Py_XDECREF(__pyx_t_15); Py_XDECREF(__pyx_t_14);
           __Pyx_RaiseBufferFallbackError();
         } else {
-          PyErr_Restore(__pyx_t_15, __pyx_t_14, __pyx_t_13);
+          PyErr_Restore(__pyx_t_16, __pyx_t_15, __pyx_t_14);
         }
-        __pyx_t_15 = __pyx_t_14 = __pyx_t_13 = 0;
+        __pyx_t_16 = __pyx_t_15 = __pyx_t_14 = 0;
       }
       __pyx_pybuffernd_bestMove.diminfo[0].strides = __pyx_pybuffernd_bestMove.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_bestMove.diminfo[0].shape = __pyx_pybuffernd_bestMove.rcbuffer->pybuffer.shape[0];
-      if (unlikely((__pyx_t_11 < 0))) __PYX_ERR(0, 168, __pyx_L1_error)
+      if (unlikely((__pyx_t_12 < 0))) __PYX_ERR(0, 173, __pyx_L1_error)
     }
+    __pyx_t_9 = 0;
+    __Pyx_DECREF_SET(__pyx_v_bestMove, ((PyArrayObject *)__pyx_t_7));
     __pyx_t_7 = 0;
-    __Pyx_DECREF_SET(__pyx_v_bestMove, ((PyArrayObject *)__pyx_t_5));
-    __pyx_t_5 = 0;
 
-    /* "algorithm_cython.pyx":171
+    /* "algorithm_cython.pyx":176
  *             #print('Best moves: ')
  *             #print(bestMove)
  *             move[0] = bestMove[1]             # <<<<<<<<<<<<<<
  *             move[1] = bestMove[2]
  *         #clock_gettime(CLOCK_REALTIME, &ts)
  */
-    __pyx_t_10 = 1;
-    __pyx_t_11 = -1;
-    if (__pyx_t_10 < 0) {
-      __pyx_t_10 += __pyx_pybuffernd_bestMove.diminfo[0].shape;
-      if (unlikely(__pyx_t_10 < 0)) __pyx_t_11 = 0;
-    } else if (unlikely(__pyx_t_10 >= __pyx_pybuffernd_bestMove.diminfo[0].shape)) __pyx_t_11 = 0;
-    if (unlikely(__pyx_t_11 != -1)) {
-      __Pyx_RaiseBufferIndexError(__pyx_t_11);
-      __PYX_ERR(0, 171, __pyx_L1_error)
+    __pyx_t_11 = 1;
+    __pyx_t_12 = -1;
+    if (__pyx_t_11 < 0) {
+      __pyx_t_11 += __pyx_pybuffernd_bestMove.diminfo[0].shape;
+      if (unlikely(__pyx_t_11 < 0)) __pyx_t_12 = 0;
+    } else if (unlikely(__pyx_t_11 >= __pyx_pybuffernd_bestMove.diminfo[0].shape)) __pyx_t_12 = 0;
+    if (unlikely(__pyx_t_12 != -1)) {
+      __Pyx_RaiseBufferIndexError(__pyx_t_12);
+      __PYX_ERR(0, 176, __pyx_L1_error)
     }
-    (__pyx_v_move[0]) = (*__Pyx_BufPtrStrided1d(__pyx_t_16algorithm_cython_DTYPE_t *, __pyx_pybuffernd_bestMove.rcbuffer->pybuffer.buf, __pyx_t_10, __pyx_pybuffernd_bestMove.diminfo[0].strides));
+    (__pyx_v_move[0]) = (*__Pyx_BufPtrStrided1d(__pyx_t_16algorithm_cython_DTYPE_t *, __pyx_pybuffernd_bestMove.rcbuffer->pybuffer.buf, __pyx_t_11, __pyx_pybuffernd_bestMove.diminfo[0].strides));
 
-    /* "algorithm_cython.pyx":172
+    /* "algorithm_cython.pyx":177
  *             #print(bestMove)
  *             move[0] = bestMove[1]
  *             move[1] = bestMove[2]             # <<<<<<<<<<<<<<
  *         #clock_gettime(CLOCK_REALTIME, &ts)
  *         #cdef time_t current_time = time(NULL)
  */
-    __pyx_t_10 = 2;
-    __pyx_t_11 = -1;
-    if (__pyx_t_10 < 0) {
-      __pyx_t_10 += __pyx_pybuffernd_bestMove.diminfo[0].shape;
-      if (unlikely(__pyx_t_10 < 0)) __pyx_t_11 = 0;
-    } else if (unlikely(__pyx_t_10 >= __pyx_pybuffernd_bestMove.diminfo[0].shape)) __pyx_t_11 = 0;
-    if (unlikely(__pyx_t_11 != -1)) {
-      __Pyx_RaiseBufferIndexError(__pyx_t_11);
-      __PYX_ERR(0, 172, __pyx_L1_error)
+    __pyx_t_11 = 2;
+    __pyx_t_12 = -1;
+    if (__pyx_t_11 < 0) {
+      __pyx_t_11 += __pyx_pybuffernd_bestMove.diminfo[0].shape;
+      if (unlikely(__pyx_t_11 < 0)) __pyx_t_12 = 0;
+    } else if (unlikely(__pyx_t_11 >= __pyx_pybuffernd_bestMove.diminfo[0].shape)) __pyx_t_12 = 0;
+    if (unlikely(__pyx_t_12 != -1)) {
+      __Pyx_RaiseBufferIndexError(__pyx_t_12);
+      __PYX_ERR(0, 177, __pyx_L1_error)
     }
-    (__pyx_v_move[1]) = (*__Pyx_BufPtrStrided1d(__pyx_t_16algorithm_cython_DTYPE_t *, __pyx_pybuffernd_bestMove.rcbuffer->pybuffer.buf, __pyx_t_10, __pyx_pybuffernd_bestMove.diminfo[0].strides));
+    (__pyx_v_move[1]) = (*__Pyx_BufPtrStrided1d(__pyx_t_16algorithm_cython_DTYPE_t *, __pyx_pybuffernd_bestMove.rcbuffer->pybuffer.buf, __pyx_t_11, __pyx_pybuffernd_bestMove.diminfo[0].strides));
   }
-  __pyx_L3:;
+  __pyx_L5:;
 
-  /* "algorithm_cython.pyx":178
+  /* "algorithm_cython.pyx":183
  *         #print("Calculation time: " + str(
  *         #    int((current_time - start_time) * 1000)) + " ms")
  *         return move             # <<<<<<<<<<<<<<
@@ -9330,10 +9400,10 @@ static PyObject *__pyx_pf_16algorithm_cython_7Minimax_calculate_next_move(PyArra
  *     """
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_5 = __Pyx_carray_to_py_int(__pyx_v_move, 2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 178, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_5);
-  __pyx_r = __pyx_t_5;
-  __pyx_t_5 = 0;
+  __pyx_t_7 = __Pyx_carray_to_py_int(__pyx_v_move, 2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 183, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_7);
+  __pyx_r = __pyx_t_7;
+  __pyx_t_7 = 0;
   goto __pyx_L0;
 
   /* "algorithm_cython.pyx":142
@@ -9348,9 +9418,9 @@ static PyObject *__pyx_pf_16algorithm_cython_7Minimax_calculate_next_move(PyArra
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
-  __Pyx_XDECREF(__pyx_t_4);
-  __Pyx_XDECREF(__pyx_t_5);
   __Pyx_XDECREF(__pyx_t_6);
+  __Pyx_XDECREF(__pyx_t_7);
+  __Pyx_XDECREF(__pyx_t_8);
   { PyObject *__pyx_type, *__pyx_value, *__pyx_tb;
     __Pyx_PyThreadState_declare
     __Pyx_PyThreadState_assign
@@ -9374,7 +9444,7 @@ static PyObject *__pyx_pf_16algorithm_cython_7Minimax_calculate_next_move(PyArra
   return __pyx_r;
 }
 
-/* "algorithm_cython.pyx":188
+/* "algorithm_cython.pyx":193
  *     #@numba.njit(parallel=True)
  *     #cdef minimax_search_ab(int depth, vector [vector[int]] dummy_board_matrix, bool max_player, int alpha, int beta):
  *     cdef list minimax_search_ab(int depth, cnp.ndarray[DTYPE_t, ndim = 2] dummy_board_matrix, int max_player,double alpha, double beta):             # <<<<<<<<<<<<<<
@@ -9417,23 +9487,23 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
   __pyx_pybuffernd_dummy_board_matrix.rcbuffer = &__pyx_pybuffer_dummy_board_matrix;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_dummy_board_matrix.rcbuffer->pybuffer, (PyObject*)__pyx_v_dummy_board_matrix, &__Pyx_TypeInfo_nn___pyx_t_16algorithm_cython_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 188, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_dummy_board_matrix.rcbuffer->pybuffer, (PyObject*)__pyx_v_dummy_board_matrix, &__Pyx_TypeInfo_nn___pyx_t_16algorithm_cython_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 193, __pyx_L1_error)
   }
   __pyx_pybuffernd_dummy_board_matrix.diminfo[0].strides = __pyx_pybuffernd_dummy_board_matrix.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_dummy_board_matrix.diminfo[0].shape = __pyx_pybuffernd_dummy_board_matrix.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_dummy_board_matrix.diminfo[1].strides = __pyx_pybuffernd_dummy_board_matrix.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_dummy_board_matrix.diminfo[1].shape = __pyx_pybuffernd_dummy_board_matrix.rcbuffer->pybuffer.shape[1];
 
-  /* "algorithm_cython.pyx":190
+  /* "algorithm_cython.pyx":195
  *     cdef list minimax_search_ab(int depth, cnp.ndarray[DTYPE_t, ndim = 2] dummy_board_matrix, int max_player,double alpha, double beta):
  *         # Last depth (terminal node), evaluate the current board_matrix score.
  *         cdef list ans = []             # <<<<<<<<<<<<<<
  *         if (depth == 0):
  *             #cdef int[4] ans = {Minimax.evaluate_board_for_white(dummy_board_matrix, not max_player), None, None}
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 190, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 195, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_ans = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "algorithm_cython.pyx":191
+  /* "algorithm_cython.pyx":196
  *         # Last depth (terminal node), evaluate the current board_matrix score.
  *         cdef list ans = []
  *         if (depth == 0):             # <<<<<<<<<<<<<<
@@ -9443,31 +9513,31 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
   __pyx_t_2 = (__pyx_v_depth == 0);
   if (__pyx_t_2) {
 
-    /* "algorithm_cython.pyx":194
+    /* "algorithm_cython.pyx":199
  *             #cdef int[4] ans = {Minimax.evaluate_board_for_white(dummy_board_matrix, not max_player), None, None}
  *             #return ans
  *             ans = [Minimax.evaluate_board_for_white(dummy_board_matrix, not max_player), 0, 0]             # <<<<<<<<<<<<<<
  *             return ans
  * 
  */
-    __pyx_t_3 = __pyx_f_16algorithm_cython_7Minimax_evaluate_board_for_white(((PyArrayObject *)__pyx_v_dummy_board_matrix), (!(__pyx_v_max_player != 0))); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 194, __pyx_L1_error)
-    __pyx_t_1 = PyFloat_FromDouble(__pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 194, __pyx_L1_error)
+    __pyx_t_3 = __pyx_f_16algorithm_cython_7Minimax_evaluate_board_for_white(((PyArrayObject *)__pyx_v_dummy_board_matrix), (!(__pyx_v_max_player != 0))); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 199, __pyx_L1_error)
+    __pyx_t_1 = PyFloat_FromDouble(__pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 199, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_4 = PyList_New(3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 194, __pyx_L1_error)
+    __pyx_t_4 = PyList_New(3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 199, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_GIVEREF(__pyx_t_1);
-    if (__Pyx_PyList_SET_ITEM(__pyx_t_4, 0, __pyx_t_1)) __PYX_ERR(0, 194, __pyx_L1_error);
+    if (__Pyx_PyList_SET_ITEM(__pyx_t_4, 0, __pyx_t_1)) __PYX_ERR(0, 199, __pyx_L1_error);
     __Pyx_INCREF(__pyx_int_0);
     __Pyx_GIVEREF(__pyx_int_0);
-    if (__Pyx_PyList_SET_ITEM(__pyx_t_4, 1, __pyx_int_0)) __PYX_ERR(0, 194, __pyx_L1_error);
+    if (__Pyx_PyList_SET_ITEM(__pyx_t_4, 1, __pyx_int_0)) __PYX_ERR(0, 199, __pyx_L1_error);
     __Pyx_INCREF(__pyx_int_0);
     __Pyx_GIVEREF(__pyx_int_0);
-    if (__Pyx_PyList_SET_ITEM(__pyx_t_4, 2, __pyx_int_0)) __PYX_ERR(0, 194, __pyx_L1_error);
+    if (__Pyx_PyList_SET_ITEM(__pyx_t_4, 2, __pyx_int_0)) __PYX_ERR(0, 199, __pyx_L1_error);
     __pyx_t_1 = 0;
     __Pyx_DECREF_SET(__pyx_v_ans, ((PyObject*)__pyx_t_4));
     __pyx_t_4 = 0;
 
-    /* "algorithm_cython.pyx":195
+    /* "algorithm_cython.pyx":200
  *             #return ans
  *             ans = [Minimax.evaluate_board_for_white(dummy_board_matrix, not max_player), 0, 0]
  *             return ans             # <<<<<<<<<<<<<<
@@ -9479,7 +9549,7 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
     __pyx_r = __pyx_v_ans;
     goto __pyx_L0;
 
-    /* "algorithm_cython.pyx":191
+    /* "algorithm_cython.pyx":196
  *         # Last depth (terminal node), evaluate the current board_matrix score.
  *         cdef list ans = []
  *         if (depth == 0):             # <<<<<<<<<<<<<<
@@ -9488,31 +9558,31 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
  */
   }
 
-  /* "algorithm_cython.pyx":199
+  /* "algorithm_cython.pyx":204
  * 
  *         # Generate all possible moves from this node of the Minimax Tree
  *         cdef list  all_possible_moves = (Board.generate_moves(dummy_board_matrix))             # <<<<<<<<<<<<<<
  *         #print("all posible moves:")
  *         #print(all_possible_moves)
  */
-  __pyx_t_4 = __pyx_f_16algorithm_cython_5Board_generate_moves(((PyArrayObject *)__pyx_v_dummy_board_matrix)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 199, __pyx_L1_error)
+  __pyx_t_4 = __pyx_f_16algorithm_cython_5Board_generate_moves(((PyArrayObject *)__pyx_v_dummy_board_matrix)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 204, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_v_all_possible_moves = ((PyObject*)__pyx_t_4);
   __pyx_t_4 = 0;
 
-  /* "algorithm_cython.pyx":202
+  /* "algorithm_cython.pyx":207
  *         #print("all posible moves:")
  *         #print(all_possible_moves)
  *         cdef list tmp_arr = []             # <<<<<<<<<<<<<<
  *         # If there are no possible moves left, treat this node as a terminal node and return the score.
  *         if (len(all_possible_moves) == 0):
  */
-  __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 202, __pyx_L1_error)
+  __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 207, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_v_tmp_arr = ((PyObject*)__pyx_t_4);
   __pyx_t_4 = 0;
 
-  /* "algorithm_cython.pyx":204
+  /* "algorithm_cython.pyx":209
  *         cdef list tmp_arr = []
  *         # If there are no possible moves left, treat this node as a terminal node and return the score.
  *         if (len(all_possible_moves) == 0):             # <<<<<<<<<<<<<<
@@ -9521,37 +9591,37 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
  */
   if (unlikely(__pyx_v_all_possible_moves == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-    __PYX_ERR(0, 204, __pyx_L1_error)
+    __PYX_ERR(0, 209, __pyx_L1_error)
   }
-  __pyx_t_5 = __Pyx_PyList_GET_SIZE(__pyx_v_all_possible_moves); if (unlikely(__pyx_t_5 == ((Py_ssize_t)-1))) __PYX_ERR(0, 204, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyList_GET_SIZE(__pyx_v_all_possible_moves); if (unlikely(__pyx_t_5 == ((Py_ssize_t)-1))) __PYX_ERR(0, 209, __pyx_L1_error)
   __pyx_t_2 = (__pyx_t_5 == 0);
   if (__pyx_t_2) {
 
-    /* "algorithm_cython.pyx":205
+    /* "algorithm_cython.pyx":210
  *         # If there are no possible moves left, treat this node as a terminal node and return the score.
  *         if (len(all_possible_moves) == 0):
  *             tmp_arr = [Minimax.evaluate_board_for_white(dummy_board_matrix, not max_player), 0, 0]             # <<<<<<<<<<<<<<
  * 
  *             return tmp_arr
  */
-    __pyx_t_3 = __pyx_f_16algorithm_cython_7Minimax_evaluate_board_for_white(((PyArrayObject *)__pyx_v_dummy_board_matrix), (!(__pyx_v_max_player != 0))); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 205, __pyx_L1_error)
-    __pyx_t_4 = PyFloat_FromDouble(__pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 205, __pyx_L1_error)
+    __pyx_t_3 = __pyx_f_16algorithm_cython_7Minimax_evaluate_board_for_white(((PyArrayObject *)__pyx_v_dummy_board_matrix), (!(__pyx_v_max_player != 0))); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 210, __pyx_L1_error)
+    __pyx_t_4 = PyFloat_FromDouble(__pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 210, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_1 = PyList_New(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 205, __pyx_L1_error)
+    __pyx_t_1 = PyList_New(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 210, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_GIVEREF(__pyx_t_4);
-    if (__Pyx_PyList_SET_ITEM(__pyx_t_1, 0, __pyx_t_4)) __PYX_ERR(0, 205, __pyx_L1_error);
+    if (__Pyx_PyList_SET_ITEM(__pyx_t_1, 0, __pyx_t_4)) __PYX_ERR(0, 210, __pyx_L1_error);
     __Pyx_INCREF(__pyx_int_0);
     __Pyx_GIVEREF(__pyx_int_0);
-    if (__Pyx_PyList_SET_ITEM(__pyx_t_1, 1, __pyx_int_0)) __PYX_ERR(0, 205, __pyx_L1_error);
+    if (__Pyx_PyList_SET_ITEM(__pyx_t_1, 1, __pyx_int_0)) __PYX_ERR(0, 210, __pyx_L1_error);
     __Pyx_INCREF(__pyx_int_0);
     __Pyx_GIVEREF(__pyx_int_0);
-    if (__Pyx_PyList_SET_ITEM(__pyx_t_1, 2, __pyx_int_0)) __PYX_ERR(0, 205, __pyx_L1_error);
+    if (__Pyx_PyList_SET_ITEM(__pyx_t_1, 2, __pyx_int_0)) __PYX_ERR(0, 210, __pyx_L1_error);
     __pyx_t_4 = 0;
     __Pyx_DECREF_SET(__pyx_v_tmp_arr, ((PyObject*)__pyx_t_1));
     __pyx_t_1 = 0;
 
-    /* "algorithm_cython.pyx":207
+    /* "algorithm_cython.pyx":212
  *             tmp_arr = [Minimax.evaluate_board_for_white(dummy_board_matrix, not max_player), 0, 0]
  * 
  *             return tmp_arr             # <<<<<<<<<<<<<<
@@ -9563,7 +9633,7 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
     __pyx_r = __pyx_v_tmp_arr;
     goto __pyx_L0;
 
-    /* "algorithm_cython.pyx":204
+    /* "algorithm_cython.pyx":209
  *         cdef list tmp_arr = []
  *         # If there are no possible moves left, treat this node as a terminal node and return the score.
  *         if (len(all_possible_moves) == 0):             # <<<<<<<<<<<<<<
@@ -9572,7 +9642,7 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
  */
   }
 
-  /* "algorithm_cython.pyx":209
+  /* "algorithm_cython.pyx":214
  *             return tmp_arr
  * 
  *         cdef int rand_x = rand()%19, rand_y = rand()%19             # <<<<<<<<<<<<<<
@@ -9582,7 +9652,7 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
   __pyx_v_rand_x = __Pyx_mod_long(rand(), 19);
   __pyx_v_rand_y = __Pyx_mod_long(rand(), 19);
 
-  /* "algorithm_cython.pyx":210
+  /* "algorithm_cython.pyx":215
  * 
  *         cdef int rand_x = rand()%19, rand_y = rand()%19
  *         while (dummy_board_matrix[rand_y][rand_x]!=0):             # <<<<<<<<<<<<<<
@@ -9590,16 +9660,16 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
  *              rand_y = rand()%19
  */
   while (1) {
-    __pyx_t_1 = __Pyx_GetItemInt(((PyObject *)__pyx_v_dummy_board_matrix), __pyx_v_rand_y, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 210, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetItemInt(((PyObject *)__pyx_v_dummy_board_matrix), __pyx_v_rand_y, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 215, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_1, __pyx_v_rand_x, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 210, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_1, __pyx_v_rand_x, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 215, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_2 = (__Pyx_PyInt_BoolNeObjC(__pyx_t_4, __pyx_int_0, 0, 0)); if (unlikely((__pyx_t_2 < 0))) __PYX_ERR(0, 210, __pyx_L1_error)
+    __pyx_t_2 = (__Pyx_PyInt_BoolNeObjC(__pyx_t_4, __pyx_int_0, 0, 0)); if (unlikely((__pyx_t_2 < 0))) __PYX_ERR(0, 215, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     if (!__pyx_t_2) break;
 
-    /* "algorithm_cython.pyx":211
+    /* "algorithm_cython.pyx":216
  *         cdef int rand_x = rand()%19, rand_y = rand()%19
  *         while (dummy_board_matrix[rand_y][rand_x]!=0):
  *              rand_x = rand()%19             # <<<<<<<<<<<<<<
@@ -9608,7 +9678,7 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
  */
     __pyx_v_rand_x = __Pyx_mod_long(rand(), 19);
 
-    /* "algorithm_cython.pyx":212
+    /* "algorithm_cython.pyx":217
  *         while (dummy_board_matrix[rand_y][rand_x]!=0):
  *              rand_x = rand()%19
  *              rand_y = rand()%19             # <<<<<<<<<<<<<<
@@ -9618,7 +9688,7 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
     __pyx_v_rand_y = __Pyx_mod_long(rand(), 19);
   }
 
-  /* "algorithm_cython.pyx":214
+  /* "algorithm_cython.pyx":219
  *              rand_y = rand()%19
  * 
  *         cdef int[3] best_move = [0, rand_y, rand_x]             # <<<<<<<<<<<<<<
@@ -9630,7 +9700,7 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
   __pyx_t_6[2] = __pyx_v_rand_x;
   memcpy(&(__pyx_v_best_move[0]), __pyx_t_6, sizeof(__pyx_v_best_move[0]) * (3));
 
-  /* "algorithm_cython.pyx":215
+  /* "algorithm_cython.pyx":220
  * 
  *         cdef int[3] best_move = [0, rand_y, rand_x]
  *         cdef int[3] temp_move = [0, 0, 0]             # <<<<<<<<<<<<<<
@@ -9642,7 +9712,7 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
   __pyx_t_7[2] = 0;
   memcpy(&(__pyx_v_temp_move[0]), __pyx_t_7, sizeof(__pyx_v_temp_move[0]) * (3));
 
-  /* "algorithm_cython.pyx":217
+  /* "algorithm_cython.pyx":222
  *         cdef int[3] temp_move = [0, 0, 0]
  *         # Generate Minimax Tree and calculate node scores.
  *         if (max_player):             # <<<<<<<<<<<<<<
@@ -9652,7 +9722,7 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
   __pyx_t_2 = (__pyx_v_max_player != 0);
   if (__pyx_t_2) {
 
-    /* "algorithm_cython.pyx":219
+    /* "algorithm_cython.pyx":224
  *         if (max_player):
  *             # Initialize the starting best move with -infinity.
  *             best_move[0] = -1             # <<<<<<<<<<<<<<
@@ -9661,7 +9731,7 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
  */
     (__pyx_v_best_move[0]) = -1;
 
-    /* "algorithm_cython.pyx":222
+    /* "algorithm_cython.pyx":227
  * 
  *             # Iterate for all possible moves that can be made.
  *             for move in all_possible_moves:             # <<<<<<<<<<<<<<
@@ -9670,7 +9740,7 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
  */
     if (unlikely(__pyx_v_all_possible_moves == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
-      __PYX_ERR(0, 222, __pyx_L1_error)
+      __PYX_ERR(0, 227, __pyx_L1_error)
     }
     __pyx_t_4 = __pyx_v_all_possible_moves; __Pyx_INCREF(__pyx_t_4);
     __pyx_t_5 = 0;
@@ -9678,71 +9748,71 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
       {
         Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_4);
         #if !CYTHON_ASSUME_SAFE_MACROS
-        if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 222, __pyx_L1_error)
+        if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 227, __pyx_L1_error)
         #endif
         if (__pyx_t_5 >= __pyx_temp) break;
       }
       #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-      __pyx_t_1 = PyList_GET_ITEM(__pyx_t_4, __pyx_t_5); __Pyx_INCREF(__pyx_t_1); __pyx_t_5++; if (unlikely((0 < 0))) __PYX_ERR(0, 222, __pyx_L1_error)
+      __pyx_t_1 = PyList_GET_ITEM(__pyx_t_4, __pyx_t_5); __Pyx_INCREF(__pyx_t_1); __pyx_t_5++; if (unlikely((0 < 0))) __PYX_ERR(0, 227, __pyx_L1_error)
       #else
-      __pyx_t_1 = __Pyx_PySequence_ITEM(__pyx_t_4, __pyx_t_5); __pyx_t_5++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 222, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PySequence_ITEM(__pyx_t_4, __pyx_t_5); __pyx_t_5++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 227, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       #endif
       __Pyx_XDECREF_SET(__pyx_v_move, __pyx_t_1);
       __pyx_t_1 = 0;
 
-      /* "algorithm_cython.pyx":225
+      /* "algorithm_cython.pyx":230
  * 
  *                 # Play the move on the temporary board_matrix without drawing anything.
  *                 Board.add_stone(dummy_board_matrix, move[1], move[0], 0)             # <<<<<<<<<<<<<<
  * 
  *                 # Call the minimax function for the next depth, to look for a minimum score.
  */
-      __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_move, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 225, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_move, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 230, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_8 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 225, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 230, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_move, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 225, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_move, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 230, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_9 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_9 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 225, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_9 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 230, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_1 = __pyx_f_16algorithm_cython_5Board_add_stone(((PyArrayObject *)__pyx_v_dummy_board_matrix), __pyx_t_8, __pyx_t_9, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 225, __pyx_L1_error)
+      __pyx_t_1 = __pyx_f_16algorithm_cython_5Board_add_stone(((PyArrayObject *)__pyx_v_dummy_board_matrix), __pyx_t_8, __pyx_t_9, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 230, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-      /* "algorithm_cython.pyx":229
+      /* "algorithm_cython.pyx":234
  *                 # Call the minimax function for the next depth, to look for a minimum score.
  * 
  *                 temp_move = Minimax.minimax_search_ab(depth - 1, dummy_board_matrix, 0, alpha, beta)             # <<<<<<<<<<<<<<
  * 
  *                 # Backtrack and remove.
  */
-      __pyx_t_1 = __pyx_f_16algorithm_cython_7Minimax_minimax_search_ab((__pyx_v_depth - 1), __pyx_v_dummy_board_matrix, 0, __pyx_v_alpha, __pyx_v_beta); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 229, __pyx_L1_error)
+      __pyx_t_1 = __pyx_f_16algorithm_cython_7Minimax_minimax_search_ab((__pyx_v_depth - 1), __pyx_v_dummy_board_matrix, 0, __pyx_v_alpha, __pyx_v_beta); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 234, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      if (unlikely((__Pyx_carray_from_py_int(__pyx_t_1, __pyx_t_10, 3) < 0))) __PYX_ERR(0, 229, __pyx_L1_error)
+      if (unlikely((__Pyx_carray_from_py_int(__pyx_t_1, __pyx_t_10, 3) < 0))) __PYX_ERR(0, 234, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       memcpy(&(__pyx_v_temp_move[0]), __pyx_t_10, sizeof(__pyx_v_temp_move[0]) * (3));
 
-      /* "algorithm_cython.pyx":232
+      /* "algorithm_cython.pyx":237
  * 
  *                 # Backtrack and remove.
  *                 Board.remove_stone(dummy_board_matrix, move[1], move[0])             # <<<<<<<<<<<<<<
  * 
  *                 # Updating alpha (alpha value holds the maximum score)
  */
-      __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_move, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 232, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_move, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 237, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_9 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_9 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 232, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_9 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 237, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_move, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 232, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_move, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 237, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_8 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 232, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 237, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_1 = __pyx_f_16algorithm_cython_5Board_remove_stone(((PyArrayObject *)__pyx_v_dummy_board_matrix), __pyx_t_9, __pyx_t_8); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 232, __pyx_L1_error)
+      __pyx_t_1 = __pyx_f_16algorithm_cython_5Board_remove_stone(((PyArrayObject *)__pyx_v_dummy_board_matrix), __pyx_t_9, __pyx_t_8); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 237, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-      /* "algorithm_cython.pyx":236
+      /* "algorithm_cython.pyx":241
  *                 # Updating alpha (alpha value holds the maximum score)
  * 
  *                 if (temp_move[0] > alpha):             # <<<<<<<<<<<<<<
@@ -9752,7 +9822,7 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
       __pyx_t_2 = ((__pyx_v_temp_move[0]) > __pyx_v_alpha);
       if (__pyx_t_2) {
 
-        /* "algorithm_cython.pyx":237
+        /* "algorithm_cython.pyx":242
  * 
  *                 if (temp_move[0] > alpha):
  *                     alpha = temp_move[0]             # <<<<<<<<<<<<<<
@@ -9761,7 +9831,7 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
  */
         __pyx_v_alpha = (__pyx_v_temp_move[0]);
 
-        /* "algorithm_cython.pyx":236
+        /* "algorithm_cython.pyx":241
  *                 # Updating alpha (alpha value holds the maximum score)
  * 
  *                 if (temp_move[0] > alpha):             # <<<<<<<<<<<<<<
@@ -9770,7 +9840,7 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
  */
       }
 
-      /* "algorithm_cython.pyx":239
+      /* "algorithm_cython.pyx":244
  *                     alpha = temp_move[0]
  * 
  *                 if (temp_move[0] >= beta):             # <<<<<<<<<<<<<<
@@ -9780,7 +9850,7 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
       __pyx_t_2 = ((__pyx_v_temp_move[0]) >= __pyx_v_beta);
       if (__pyx_t_2) {
 
-        /* "algorithm_cython.pyx":240
+        /* "algorithm_cython.pyx":245
  * 
  *                 if (temp_move[0] >= beta):
  *                     return temp_move             # <<<<<<<<<<<<<<
@@ -9788,15 +9858,15 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
  *                 # Find the move with the maximum score.
  */
         __Pyx_XDECREF(__pyx_r);
-        __pyx_t_1 = __Pyx_carray_to_py_int(__pyx_v_temp_move, 3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 240, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_carray_to_py_int(__pyx_v_temp_move, 3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 245, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        if (!(likely(PyList_CheckExact(__pyx_t_1)) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_t_1))) __PYX_ERR(0, 240, __pyx_L1_error)
+        if (!(likely(PyList_CheckExact(__pyx_t_1)) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_t_1))) __PYX_ERR(0, 245, __pyx_L1_error)
         __pyx_r = ((PyObject*)__pyx_t_1);
         __pyx_t_1 = 0;
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
         goto __pyx_L0;
 
-        /* "algorithm_cython.pyx":239
+        /* "algorithm_cython.pyx":244
  *                     alpha = temp_move[0]
  * 
  *                 if (temp_move[0] >= beta):             # <<<<<<<<<<<<<<
@@ -9805,7 +9875,7 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
  */
       }
 
-      /* "algorithm_cython.pyx":243
+      /* "algorithm_cython.pyx":248
  * 
  *                 # Find the move with the maximum score.
  *                 if (temp_move[0] > best_move[0]):             # <<<<<<<<<<<<<<
@@ -9815,7 +9885,7 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
       __pyx_t_2 = ((__pyx_v_temp_move[0]) > (__pyx_v_best_move[0]));
       if (__pyx_t_2) {
 
-        /* "algorithm_cython.pyx":244
+        /* "algorithm_cython.pyx":249
  *                 # Find the move with the maximum score.
  *                 if (temp_move[0] > best_move[0]):
  *                     best_move = temp_move             # <<<<<<<<<<<<<<
@@ -9824,33 +9894,33 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
  */
         memcpy(&(__pyx_v_best_move[0]), __pyx_v_temp_move, sizeof(__pyx_v_best_move[0]) * (3));
 
-        /* "algorithm_cython.pyx":245
+        /* "algorithm_cython.pyx":250
  *                 if (temp_move[0] > best_move[0]):
  *                     best_move = temp_move
  *                     best_move[1] = move[0]             # <<<<<<<<<<<<<<
  *                     best_move[2] = move[1]
  * 
  */
-        __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_move, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 245, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_move, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 250, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_8 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 245, __pyx_L1_error)
+        __pyx_t_8 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 250, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         (__pyx_v_best_move[1]) = __pyx_t_8;
 
-        /* "algorithm_cython.pyx":246
+        /* "algorithm_cython.pyx":251
  *                     best_move = temp_move
  *                     best_move[1] = move[0]
  *                     best_move[2] = move[1]             # <<<<<<<<<<<<<<
  * 
  *         else:
  */
-        __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_move, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 246, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_move, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 251, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_8 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 246, __pyx_L1_error)
+        __pyx_t_8 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 251, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         (__pyx_v_best_move[2]) = __pyx_t_8;
 
-        /* "algorithm_cython.pyx":243
+        /* "algorithm_cython.pyx":248
  * 
  *                 # Find the move with the maximum score.
  *                 if (temp_move[0] > best_move[0]):             # <<<<<<<<<<<<<<
@@ -9859,7 +9929,7 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
  */
       }
 
-      /* "algorithm_cython.pyx":222
+      /* "algorithm_cython.pyx":227
  * 
  *             # Iterate for all possible moves that can be made.
  *             for move in all_possible_moves:             # <<<<<<<<<<<<<<
@@ -9869,7 +9939,7 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
     }
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-    /* "algorithm_cython.pyx":217
+    /* "algorithm_cython.pyx":222
  *         cdef int[3] temp_move = [0, 0, 0]
  *         # Generate Minimax Tree and calculate node scores.
  *         if (max_player):             # <<<<<<<<<<<<<<
@@ -9879,7 +9949,7 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
     goto __pyx_L7;
   }
 
-  /* "algorithm_cython.pyx":250
+  /* "algorithm_cython.pyx":255
  *         else:
  *             # Initialize the starting best move using the first move in the list and +infinity score.
  *             best_move[0] = 100_000_000             # <<<<<<<<<<<<<<
@@ -9889,7 +9959,7 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
   /*else*/ {
     (__pyx_v_best_move[0]) = 0x5F5E100;
 
-    /* "algorithm_cython.pyx":251
+    /* "algorithm_cython.pyx":256
  *             # Initialize the starting best move using the first move in the list and +infinity score.
  *             best_move[0] = 100_000_000
  *             best_move[1] = all_possible_moves[0][0]             # <<<<<<<<<<<<<<
@@ -9898,18 +9968,18 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
  */
     if (unlikely(__pyx_v_all_possible_moves == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 251, __pyx_L1_error)
+      __PYX_ERR(0, 256, __pyx_L1_error)
     }
-    __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_all_possible_moves, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 251, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_all_possible_moves, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 256, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_4, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 251, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_4, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 256, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_8 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 251, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 256, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     (__pyx_v_best_move[1]) = __pyx_t_8;
 
-    /* "algorithm_cython.pyx":252
+    /* "algorithm_cython.pyx":257
  *             best_move[0] = 100_000_000
  *             best_move[1] = all_possible_moves[0][0]
  *             best_move[2] = all_possible_moves[0][1]             # <<<<<<<<<<<<<<
@@ -9918,18 +9988,18 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
  */
     if (unlikely(__pyx_v_all_possible_moves == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 252, __pyx_L1_error)
+      __PYX_ERR(0, 257, __pyx_L1_error)
     }
-    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_all_possible_moves, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 252, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_all_possible_moves, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 257, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_1, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 252, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_1, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 257, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_8 = __Pyx_PyInt_As_int(__pyx_t_4); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 252, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyInt_As_int(__pyx_t_4); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 257, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     (__pyx_v_best_move[2]) = __pyx_t_8;
 
-    /* "algorithm_cython.pyx":255
+    /* "algorithm_cython.pyx":260
  * 
  *             # Iterate for all possible moves that can be made.
  *             for move in all_possible_moves:             # <<<<<<<<<<<<<<
@@ -9938,7 +10008,7 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
  */
     if (unlikely(__pyx_v_all_possible_moves == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
-      __PYX_ERR(0, 255, __pyx_L1_error)
+      __PYX_ERR(0, 260, __pyx_L1_error)
     }
     __pyx_t_4 = __pyx_v_all_possible_moves; __Pyx_INCREF(__pyx_t_4);
     __pyx_t_5 = 0;
@@ -9946,71 +10016,71 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
       {
         Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_4);
         #if !CYTHON_ASSUME_SAFE_MACROS
-        if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 255, __pyx_L1_error)
+        if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 260, __pyx_L1_error)
         #endif
         if (__pyx_t_5 >= __pyx_temp) break;
       }
       #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-      __pyx_t_1 = PyList_GET_ITEM(__pyx_t_4, __pyx_t_5); __Pyx_INCREF(__pyx_t_1); __pyx_t_5++; if (unlikely((0 < 0))) __PYX_ERR(0, 255, __pyx_L1_error)
+      __pyx_t_1 = PyList_GET_ITEM(__pyx_t_4, __pyx_t_5); __Pyx_INCREF(__pyx_t_1); __pyx_t_5++; if (unlikely((0 < 0))) __PYX_ERR(0, 260, __pyx_L1_error)
       #else
-      __pyx_t_1 = __Pyx_PySequence_ITEM(__pyx_t_4, __pyx_t_5); __pyx_t_5++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 255, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PySequence_ITEM(__pyx_t_4, __pyx_t_5); __pyx_t_5++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 260, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       #endif
       __Pyx_XDECREF_SET(__pyx_v_move, __pyx_t_1);
       __pyx_t_1 = 0;
 
-      /* "algorithm_cython.pyx":258
+      /* "algorithm_cython.pyx":263
  * 
  *                 # Play the move on the temporary board_matrix without drawing anything.
  *                 Board.add_stone(dummy_board_matrix, move[1], move[0], 1)             # <<<<<<<<<<<<<<
  * 
  *                 temp_move = Minimax.minimax_search_ab(depth - 1, dummy_board_matrix, 1, alpha, beta)
  */
-      __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_move, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 258, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_move, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 263, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_8 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 258, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 263, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_move, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 258, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_move, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 263, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_9 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_9 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 258, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_9 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 263, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_1 = __pyx_f_16algorithm_cython_5Board_add_stone(((PyArrayObject *)__pyx_v_dummy_board_matrix), __pyx_t_8, __pyx_t_9, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 258, __pyx_L1_error)
+      __pyx_t_1 = __pyx_f_16algorithm_cython_5Board_add_stone(((PyArrayObject *)__pyx_v_dummy_board_matrix), __pyx_t_8, __pyx_t_9, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 263, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-      /* "algorithm_cython.pyx":260
+      /* "algorithm_cython.pyx":265
  *                 Board.add_stone(dummy_board_matrix, move[1], move[0], 1)
  * 
  *                 temp_move = Minimax.minimax_search_ab(depth - 1, dummy_board_matrix, 1, alpha, beta)             # <<<<<<<<<<<<<<
  * 
  *                 Board.remove_stone(dummy_board_matrix, move[1], move[0])
  */
-      __pyx_t_1 = __pyx_f_16algorithm_cython_7Minimax_minimax_search_ab((__pyx_v_depth - 1), __pyx_v_dummy_board_matrix, 1, __pyx_v_alpha, __pyx_v_beta); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 260, __pyx_L1_error)
+      __pyx_t_1 = __pyx_f_16algorithm_cython_7Minimax_minimax_search_ab((__pyx_v_depth - 1), __pyx_v_dummy_board_matrix, 1, __pyx_v_alpha, __pyx_v_beta); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 265, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      if (unlikely((__Pyx_carray_from_py_int(__pyx_t_1, __pyx_t_10, 3) < 0))) __PYX_ERR(0, 260, __pyx_L1_error)
+      if (unlikely((__Pyx_carray_from_py_int(__pyx_t_1, __pyx_t_10, 3) < 0))) __PYX_ERR(0, 265, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       memcpy(&(__pyx_v_temp_move[0]), __pyx_t_10, sizeof(__pyx_v_temp_move[0]) * (3));
 
-      /* "algorithm_cython.pyx":262
+      /* "algorithm_cython.pyx":267
  *                 temp_move = Minimax.minimax_search_ab(depth - 1, dummy_board_matrix, 1, alpha, beta)
  * 
  *                 Board.remove_stone(dummy_board_matrix, move[1], move[0])             # <<<<<<<<<<<<<<
  * 
  *                 beta = min(temp_move[0], beta)
  */
-      __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_move, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 262, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_move, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 267, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_9 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_9 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 262, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_9 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 267, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_move, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 262, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_move, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 267, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_8 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 262, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 267, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_1 = __pyx_f_16algorithm_cython_5Board_remove_stone(((PyArrayObject *)__pyx_v_dummy_board_matrix), __pyx_t_9, __pyx_t_8); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 262, __pyx_L1_error)
+      __pyx_t_1 = __pyx_f_16algorithm_cython_5Board_remove_stone(((PyArrayObject *)__pyx_v_dummy_board_matrix), __pyx_t_9, __pyx_t_8); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 267, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-      /* "algorithm_cython.pyx":264
+      /* "algorithm_cython.pyx":269
  *                 Board.remove_stone(dummy_board_matrix, move[1], move[0])
  * 
  *                 beta = min(temp_move[0], beta)             # <<<<<<<<<<<<<<
@@ -10027,7 +10097,7 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
       }
       __pyx_v_beta = __pyx_t_12;
 
-      /* "algorithm_cython.pyx":266
+      /* "algorithm_cython.pyx":271
  *                 beta = min(temp_move[0], beta)
  * 
  *                 if temp_move[0] <= alpha:             # <<<<<<<<<<<<<<
@@ -10037,7 +10107,7 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
       __pyx_t_2 = ((__pyx_v_temp_move[0]) <= __pyx_v_alpha);
       if (__pyx_t_2) {
 
-        /* "algorithm_cython.pyx":267
+        /* "algorithm_cython.pyx":272
  * 
  *                 if temp_move[0] <= alpha:
  *                     return temp_move             # <<<<<<<<<<<<<<
@@ -10045,15 +10115,15 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
  *                 # Find the move with the minimum score.
  */
         __Pyx_XDECREF(__pyx_r);
-        __pyx_t_1 = __Pyx_carray_to_py_int(__pyx_v_temp_move, 3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 267, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_carray_to_py_int(__pyx_v_temp_move, 3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 272, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        if (!(likely(PyList_CheckExact(__pyx_t_1)) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_t_1))) __PYX_ERR(0, 267, __pyx_L1_error)
+        if (!(likely(PyList_CheckExact(__pyx_t_1)) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_t_1))) __PYX_ERR(0, 272, __pyx_L1_error)
         __pyx_r = ((PyObject*)__pyx_t_1);
         __pyx_t_1 = 0;
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
         goto __pyx_L0;
 
-        /* "algorithm_cython.pyx":266
+        /* "algorithm_cython.pyx":271
  *                 beta = min(temp_move[0], beta)
  * 
  *                 if temp_move[0] <= alpha:             # <<<<<<<<<<<<<<
@@ -10062,7 +10132,7 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
  */
       }
 
-      /* "algorithm_cython.pyx":270
+      /* "algorithm_cython.pyx":275
  * 
  *                 # Find the move with the minimum score.
  *                 if temp_move[0] < best_move[0]:             # <<<<<<<<<<<<<<
@@ -10072,7 +10142,7 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
       __pyx_t_2 = ((__pyx_v_temp_move[0]) < (__pyx_v_best_move[0]));
       if (__pyx_t_2) {
 
-        /* "algorithm_cython.pyx":271
+        /* "algorithm_cython.pyx":276
  *                 # Find the move with the minimum score.
  *                 if temp_move[0] < best_move[0]:
  *                     best_move = temp_move             # <<<<<<<<<<<<<<
@@ -10081,33 +10151,33 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
  */
         memcpy(&(__pyx_v_best_move[0]), __pyx_v_temp_move, sizeof(__pyx_v_best_move[0]) * (3));
 
-        /* "algorithm_cython.pyx":272
+        /* "algorithm_cython.pyx":277
  *                 if temp_move[0] < best_move[0]:
  *                     best_move = temp_move
  *                     best_move[1] = move[0]             # <<<<<<<<<<<<<<
  *                     best_move[2] = move[1]
  *         # // Return the best move found in this depth
  */
-        __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_move, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 272, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_move, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 277, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_8 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 272, __pyx_L1_error)
+        __pyx_t_8 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 277, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         (__pyx_v_best_move[1]) = __pyx_t_8;
 
-        /* "algorithm_cython.pyx":273
+        /* "algorithm_cython.pyx":278
  *                     best_move = temp_move
  *                     best_move[1] = move[0]
  *                     best_move[2] = move[1]             # <<<<<<<<<<<<<<
  *         # // Return the best move found in this depth
  *         return best_move
  */
-        __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_move, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 273, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_move, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 278, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_8 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 273, __pyx_L1_error)
+        __pyx_t_8 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 278, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         (__pyx_v_best_move[2]) = __pyx_t_8;
 
-        /* "algorithm_cython.pyx":270
+        /* "algorithm_cython.pyx":275
  * 
  *                 # Find the move with the minimum score.
  *                 if temp_move[0] < best_move[0]:             # <<<<<<<<<<<<<<
@@ -10116,7 +10186,7 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
  */
       }
 
-      /* "algorithm_cython.pyx":255
+      /* "algorithm_cython.pyx":260
  * 
  *             # Iterate for all possible moves that can be made.
  *             for move in all_possible_moves:             # <<<<<<<<<<<<<<
@@ -10128,7 +10198,7 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
   }
   __pyx_L7:;
 
-  /* "algorithm_cython.pyx":275
+  /* "algorithm_cython.pyx":280
  *                     best_move[2] = move[1]
  *         # // Return the best move found in this depth
  *         return best_move             # <<<<<<<<<<<<<<
@@ -10136,14 +10206,14 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
  * 
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_4 = __Pyx_carray_to_py_int(__pyx_v_best_move, 3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 275, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_carray_to_py_int(__pyx_v_best_move, 3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 280, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  if (!(likely(PyList_CheckExact(__pyx_t_4)) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_t_4))) __PYX_ERR(0, 275, __pyx_L1_error)
+  if (!(likely(PyList_CheckExact(__pyx_t_4)) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_t_4))) __PYX_ERR(0, 280, __pyx_L1_error)
   __pyx_r = ((PyObject*)__pyx_t_4);
   __pyx_t_4 = 0;
   goto __pyx_L0;
 
-  /* "algorithm_cython.pyx":188
+  /* "algorithm_cython.pyx":193
  *     #@numba.njit(parallel=True)
  *     #cdef minimax_search_ab(int depth, vector [vector[int]] dummy_board_matrix, bool max_player, int alpha, int beta):
  *     cdef list minimax_search_ab(int depth, cnp.ndarray[DTYPE_t, ndim = 2] dummy_board_matrix, int max_player,double alpha, double beta):             # <<<<<<<<<<<<<<
@@ -10176,7 +10246,7 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_minimax_search_ab(int __pyx
   return __pyx_r;
 }
 
-/* "algorithm_cython.pyx":279
+/* "algorithm_cython.pyx":284
  * 
  *     @staticmethod
  *     cdef list search_winning_move(cnp.ndarray[DTYPE_t, ndim = 2] board_matrix):             # <<<<<<<<<<<<<<
@@ -10221,23 +10291,23 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_search_winning_move(PyArray
   __pyx_pybuffernd_board_matrix.rcbuffer = &__pyx_pybuffer_board_matrix;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_board_matrix.rcbuffer->pybuffer, (PyObject*)__pyx_v_board_matrix, &__Pyx_TypeInfo_nn___pyx_t_16algorithm_cython_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 279, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_board_matrix.rcbuffer->pybuffer, (PyObject*)__pyx_v_board_matrix, &__Pyx_TypeInfo_nn___pyx_t_16algorithm_cython_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 284, __pyx_L1_error)
   }
   __pyx_pybuffernd_board_matrix.diminfo[0].strides = __pyx_pybuffernd_board_matrix.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_board_matrix.diminfo[0].shape = __pyx_pybuffernd_board_matrix.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_board_matrix.diminfo[1].strides = __pyx_pybuffernd_board_matrix.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_board_matrix.diminfo[1].shape = __pyx_pybuffernd_board_matrix.rcbuffer->pybuffer.shape[1];
 
-  /* "algorithm_cython.pyx":281
+  /* "algorithm_cython.pyx":286
  *     cdef list search_winning_move(cnp.ndarray[DTYPE_t, ndim = 2] board_matrix):
  * 
  *         cdef list  all_possible_moves = Board.generate_moves(board_matrix)             # <<<<<<<<<<<<<<
  *         cdef int[3] winning_move = [0, 0, 0]
  * 
  */
-  __pyx_t_1 = __pyx_f_16algorithm_cython_5Board_generate_moves(((PyArrayObject *)__pyx_v_board_matrix)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 281, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_16algorithm_cython_5Board_generate_moves(((PyArrayObject *)__pyx_v_board_matrix)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 286, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_all_possible_moves = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "algorithm_cython.pyx":282
+  /* "algorithm_cython.pyx":287
  * 
  *         cdef list  all_possible_moves = Board.generate_moves(board_matrix)
  *         cdef int[3] winning_move = [0, 0, 0]             # <<<<<<<<<<<<<<
@@ -10249,7 +10319,7 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_search_winning_move(PyArray
   __pyx_t_2[2] = 0;
   memcpy(&(__pyx_v_winning_move[0]), __pyx_t_2, sizeof(__pyx_v_winning_move[0]) * (3));
 
-  /* "algorithm_cython.pyx":286
+  /* "algorithm_cython.pyx":291
  *         cdef cnp.ndarray[DTYPE_t, ndim = 2] dummy_board
  *         #print(len(all_possible_moves))
  *         for move in all_possible_moves:             # <<<<<<<<<<<<<<
@@ -10258,7 +10328,7 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_search_winning_move(PyArray
  */
   if (unlikely(__pyx_v_all_possible_moves == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
-    __PYX_ERR(0, 286, __pyx_L1_error)
+    __PYX_ERR(0, 291, __pyx_L1_error)
   }
   __pyx_t_1 = __pyx_v_all_possible_moves; __Pyx_INCREF(__pyx_t_1);
   __pyx_t_3 = 0;
@@ -10266,29 +10336,29 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_search_winning_move(PyArray
     {
       Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_1);
       #if !CYTHON_ASSUME_SAFE_MACROS
-      if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 286, __pyx_L1_error)
+      if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 291, __pyx_L1_error)
       #endif
       if (__pyx_t_3 >= __pyx_temp) break;
     }
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-    __pyx_t_4 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_3); __Pyx_INCREF(__pyx_t_4); __pyx_t_3++; if (unlikely((0 < 0))) __PYX_ERR(0, 286, __pyx_L1_error)
+    __pyx_t_4 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_3); __Pyx_INCREF(__pyx_t_4); __pyx_t_3++; if (unlikely((0 < 0))) __PYX_ERR(0, 291, __pyx_L1_error)
     #else
-    __pyx_t_4 = __Pyx_PySequence_ITEM(__pyx_t_1, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 286, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PySequence_ITEM(__pyx_t_1, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 291, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     #endif
     __Pyx_XDECREF_SET(__pyx_v_move, __pyx_t_4);
     __pyx_t_4 = 0;
 
-    /* "algorithm_cython.pyx":288
+    /* "algorithm_cython.pyx":293
  *         for move in all_possible_moves:
  *             # Create a temporary board_matrix that is equivalent to the current board_matrix
  *             dummy_board = Board.clone_matrix(board_matrix)             # <<<<<<<<<<<<<<
  *             # Play the move on that temporary board_matrix without drawing anything
  *             Board.add_stone(dummy_board, move[1], move[0], 0)
  */
-    __pyx_t_4 = __pyx_f_16algorithm_cython_5Board_clone_matrix(((PyArrayObject *)__pyx_v_board_matrix)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 288, __pyx_L1_error)
+    __pyx_t_4 = __pyx_f_16algorithm_cython_5Board_clone_matrix(((PyArrayObject *)__pyx_v_board_matrix)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 293, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    if (!(likely(((__pyx_t_4) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_4, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 288, __pyx_L1_error)
+    if (!(likely(((__pyx_t_4) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_4, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 293, __pyx_L1_error)
     __pyx_t_5 = ((PyArrayObject *)__pyx_t_4);
     {
       __Pyx_BufFmt_StackElem __pyx_stack[1];
@@ -10305,70 +10375,70 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_search_winning_move(PyArray
         __pyx_t_7 = __pyx_t_8 = __pyx_t_9 = 0;
       }
       __pyx_pybuffernd_dummy_board.diminfo[0].strides = __pyx_pybuffernd_dummy_board.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_dummy_board.diminfo[0].shape = __pyx_pybuffernd_dummy_board.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_dummy_board.diminfo[1].strides = __pyx_pybuffernd_dummy_board.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_dummy_board.diminfo[1].shape = __pyx_pybuffernd_dummy_board.rcbuffer->pybuffer.shape[1];
-      if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 288, __pyx_L1_error)
+      if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 293, __pyx_L1_error)
     }
     __pyx_t_5 = 0;
     __Pyx_XDECREF_SET(__pyx_v_dummy_board, ((PyArrayObject *)__pyx_t_4));
     __pyx_t_4 = 0;
 
-    /* "algorithm_cython.pyx":290
+    /* "algorithm_cython.pyx":295
  *             dummy_board = Board.clone_matrix(board_matrix)
  *             # Play the move on that temporary board_matrix without drawing anything
  *             Board.add_stone(dummy_board, move[1], move[0], 0)             # <<<<<<<<<<<<<<
  * 
  *             # If the white player has a winning score in that temporary board_matrix, return the move.
  */
-    __pyx_t_4 = __Pyx_GetItemInt(__pyx_v_move, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 290, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_GetItemInt(__pyx_v_move, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 295, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_6 = __Pyx_PyInt_As_int(__pyx_t_4); if (unlikely((__pyx_t_6 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 290, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyInt_As_int(__pyx_t_4); if (unlikely((__pyx_t_6 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 295, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_4 = __Pyx_GetItemInt(__pyx_v_move, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 290, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_GetItemInt(__pyx_v_move, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 295, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_10 = __Pyx_PyInt_As_int(__pyx_t_4); if (unlikely((__pyx_t_10 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 290, __pyx_L1_error)
+    __pyx_t_10 = __Pyx_PyInt_As_int(__pyx_t_4); if (unlikely((__pyx_t_10 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 295, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_4 = __pyx_f_16algorithm_cython_5Board_add_stone(((PyArrayObject *)__pyx_v_dummy_board), __pyx_t_6, __pyx_t_10, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 290, __pyx_L1_error)
+    __pyx_t_4 = __pyx_f_16algorithm_cython_5Board_add_stone(((PyArrayObject *)__pyx_v_dummy_board), __pyx_t_6, __pyx_t_10, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 295, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-    /* "algorithm_cython.pyx":293
+    /* "algorithm_cython.pyx":298
  * 
  *             # If the white player has a winning score in that temporary board_matrix, return the move.
  *             if (Minimax.get_score(dummy_board, 0, 0) >= Minimax.get_win_score()):             # <<<<<<<<<<<<<<
  *                 winning_move[1] = move[0]
  *                 winning_move[2] = move[1]
  */
-    __pyx_t_11 = __pyx_f_16algorithm_cython_7Minimax_get_score(((PyArrayObject *)__pyx_v_dummy_board), 0, 0); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 293, __pyx_L1_error)
-    __pyx_t_10 = __pyx_f_16algorithm_cython_7Minimax_get_win_score(); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 293, __pyx_L1_error)
+    __pyx_t_11 = __pyx_f_16algorithm_cython_7Minimax_get_score(((PyArrayObject *)__pyx_v_dummy_board), 0, 0); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 298, __pyx_L1_error)
+    __pyx_t_10 = __pyx_f_16algorithm_cython_7Minimax_get_win_score(); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 298, __pyx_L1_error)
     __pyx_t_12 = (__pyx_t_11 >= __pyx_t_10);
     if (__pyx_t_12) {
 
-      /* "algorithm_cython.pyx":294
+      /* "algorithm_cython.pyx":299
  *             # If the white player has a winning score in that temporary board_matrix, return the move.
  *             if (Minimax.get_score(dummy_board, 0, 0) >= Minimax.get_win_score()):
  *                 winning_move[1] = move[0]             # <<<<<<<<<<<<<<
  *                 winning_move[2] = move[1]
  *                 #print("winning move: ", winning_move)
  */
-      __pyx_t_4 = __Pyx_GetItemInt(__pyx_v_move, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 294, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_GetItemInt(__pyx_v_move, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 299, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_10 = __Pyx_PyInt_As_int(__pyx_t_4); if (unlikely((__pyx_t_10 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 294, __pyx_L1_error)
+      __pyx_t_10 = __Pyx_PyInt_As_int(__pyx_t_4); if (unlikely((__pyx_t_10 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 299, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       (__pyx_v_winning_move[1]) = __pyx_t_10;
 
-      /* "algorithm_cython.pyx":295
+      /* "algorithm_cython.pyx":300
  *             if (Minimax.get_score(dummy_board, 0, 0) >= Minimax.get_win_score()):
  *                 winning_move[1] = move[0]
  *                 winning_move[2] = move[1]             # <<<<<<<<<<<<<<
  *                 #print("winning move: ", winning_move)
  *                 return winning_move
  */
-      __pyx_t_4 = __Pyx_GetItemInt(__pyx_v_move, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 295, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_GetItemInt(__pyx_v_move, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 300, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_10 = __Pyx_PyInt_As_int(__pyx_t_4); if (unlikely((__pyx_t_10 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 295, __pyx_L1_error)
+      __pyx_t_10 = __Pyx_PyInt_As_int(__pyx_t_4); if (unlikely((__pyx_t_10 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 300, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       (__pyx_v_winning_move[2]) = __pyx_t_10;
 
-      /* "algorithm_cython.pyx":297
+      /* "algorithm_cython.pyx":302
  *                 winning_move[2] = move[1]
  *                 #print("winning move: ", winning_move)
  *                 return winning_move             # <<<<<<<<<<<<<<
@@ -10376,15 +10446,15 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_search_winning_move(PyArray
  *         return []
  */
       __Pyx_XDECREF(__pyx_r);
-      __pyx_t_4 = __Pyx_carray_to_py_int(__pyx_v_winning_move, 3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 297, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_carray_to_py_int(__pyx_v_winning_move, 3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 302, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      if (!(likely(PyList_CheckExact(__pyx_t_4)) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_t_4))) __PYX_ERR(0, 297, __pyx_L1_error)
+      if (!(likely(PyList_CheckExact(__pyx_t_4)) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_t_4))) __PYX_ERR(0, 302, __pyx_L1_error)
       __pyx_r = ((PyObject*)__pyx_t_4);
       __pyx_t_4 = 0;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       goto __pyx_L0;
 
-      /* "algorithm_cython.pyx":293
+      /* "algorithm_cython.pyx":298
  * 
  *             # If the white player has a winning score in that temporary board_matrix, return the move.
  *             if (Minimax.get_score(dummy_board, 0, 0) >= Minimax.get_win_score()):             # <<<<<<<<<<<<<<
@@ -10393,7 +10463,7 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_search_winning_move(PyArray
  */
     }
 
-    /* "algorithm_cython.pyx":286
+    /* "algorithm_cython.pyx":291
  *         cdef cnp.ndarray[DTYPE_t, ndim = 2] dummy_board
  *         #print(len(all_possible_moves))
  *         for move in all_possible_moves:             # <<<<<<<<<<<<<<
@@ -10403,7 +10473,7 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_search_winning_move(PyArray
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "algorithm_cython.pyx":299
+  /* "algorithm_cython.pyx":304
  *                 return winning_move
  *         #print("search found nothin")
  *         return []             # <<<<<<<<<<<<<<
@@ -10411,13 +10481,13 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_search_winning_move(PyArray
  *     # This function calculates the score by evaluating the stone positions in horizontal direction
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 299, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 304, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "algorithm_cython.pyx":279
+  /* "algorithm_cython.pyx":284
  * 
  *     @staticmethod
  *     cdef list search_winning_move(cnp.ndarray[DTYPE_t, ndim = 2] board_matrix):             # <<<<<<<<<<<<<<
@@ -10451,7 +10521,7 @@ static PyObject *__pyx_f_16algorithm_cython_7Minimax_search_winning_move(PyArray
   return __pyx_r;
 }
 
-/* "algorithm_cython.pyx":303
+/* "algorithm_cython.pyx":308
  *     # This function calculates the score by evaluating the stone positions in horizontal direction
  *     @staticmethod
  *     cdef int evaluate_horizontal(cnp.ndarray[DTYPE_t, ndim = 2] boardMatrix, int forBlack, int playersTurn):             # <<<<<<<<<<<<<<
@@ -10486,11 +10556,11 @@ static int __pyx_f_16algorithm_cython_7Minimax_evaluate_horizontal(PyArrayObject
   __pyx_pybuffernd_boardMatrix.rcbuffer = &__pyx_pybuffer_boardMatrix;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_boardMatrix.rcbuffer->pybuffer, (PyObject*)__pyx_v_boardMatrix, &__Pyx_TypeInfo_nn___pyx_t_16algorithm_cython_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 303, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_boardMatrix.rcbuffer->pybuffer, (PyObject*)__pyx_v_boardMatrix, &__Pyx_TypeInfo_nn___pyx_t_16algorithm_cython_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 308, __pyx_L1_error)
   }
   __pyx_pybuffernd_boardMatrix.diminfo[0].strides = __pyx_pybuffernd_boardMatrix.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_boardMatrix.diminfo[0].shape = __pyx_pybuffernd_boardMatrix.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_boardMatrix.diminfo[1].strides = __pyx_pybuffernd_boardMatrix.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_boardMatrix.diminfo[1].shape = __pyx_pybuffernd_boardMatrix.rcbuffer->pybuffer.shape[1];
 
-  /* "algorithm_cython.pyx":305
+  /* "algorithm_cython.pyx":310
  *     cdef int evaluate_horizontal(cnp.ndarray[DTYPE_t, ndim = 2] boardMatrix, int forBlack, int playersTurn):
  * 
  *         cdef int[3] evaluations = [0, 2, 0] # [0] -> consecutive count, [1] -> block count, [2] -> score             # <<<<<<<<<<<<<<
@@ -10502,7 +10572,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_evaluate_horizontal(PyArrayObject
   __pyx_t_1[2] = 0;
   memcpy(&(__pyx_v_evaluations[0]), __pyx_t_1, sizeof(__pyx_v_evaluations[0]) * (3));
 
-  /* "algorithm_cython.pyx":307
+  /* "algorithm_cython.pyx":312
  *         cdef int[3] evaluations = [0, 2, 0] # [0] -> consecutive count, [1] -> block count, [2] -> score
  * 
  *         cdef int i = 0             # <<<<<<<<<<<<<<
@@ -10511,7 +10581,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_evaluate_horizontal(PyArrayObject
  */
   __pyx_v_i = 0;
 
-  /* "algorithm_cython.pyx":308
+  /* "algorithm_cython.pyx":313
  * 
  *         cdef int i = 0
  *         cdef int j = 0             # <<<<<<<<<<<<<<
@@ -10520,19 +10590,19 @@ static int __pyx_f_16algorithm_cython_7Minimax_evaluate_horizontal(PyArrayObject
  */
   __pyx_v_j = 0;
 
-  /* "algorithm_cython.pyx":309
+  /* "algorithm_cython.pyx":314
  *         cdef int i = 0
  *         cdef int j = 0
  *         for i in range(len(boardMatrix)):             # <<<<<<<<<<<<<<
  *             #// Iterate over all cells in a row
  *             j = 0
  */
-  __pyx_t_2 = PyObject_Length(((PyObject *)__pyx_v_boardMatrix)); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(0, 309, __pyx_L1_error)
+  __pyx_t_2 = PyObject_Length(((PyObject *)__pyx_v_boardMatrix)); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(0, 314, __pyx_L1_error)
   __pyx_t_3 = __pyx_t_2;
   for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
     __pyx_v_i = __pyx_t_4;
 
-    /* "algorithm_cython.pyx":311
+    /* "algorithm_cython.pyx":316
  *         for i in range(len(boardMatrix)):
  *             #// Iterate over all cells in a row
  *             j = 0             # <<<<<<<<<<<<<<
@@ -10541,44 +10611,44 @@ static int __pyx_f_16algorithm_cython_7Minimax_evaluate_horizontal(PyArrayObject
  */
     __pyx_v_j = 0;
 
-    /* "algorithm_cython.pyx":312
+    /* "algorithm_cython.pyx":317
  *             #// Iterate over all cells in a row
  *             j = 0
  *             for j in range( len(boardMatrix[0])):             # <<<<<<<<<<<<<<
  *                 #// Check if the selected player has a stone in the current cell
  *                 evaluations = Minimax.evaluate_directions(boardMatrix, i, j, forBlack, playersTurn, evaluations)
  */
-    __pyx_t_5 = __Pyx_GetItemInt(((PyObject *)__pyx_v_boardMatrix), 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 312, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_GetItemInt(((PyObject *)__pyx_v_boardMatrix), 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 317, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_6 = PyObject_Length(__pyx_t_5); if (unlikely(__pyx_t_6 == ((Py_ssize_t)-1))) __PYX_ERR(0, 312, __pyx_L1_error)
+    __pyx_t_6 = PyObject_Length(__pyx_t_5); if (unlikely(__pyx_t_6 == ((Py_ssize_t)-1))) __PYX_ERR(0, 317, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __pyx_t_7 = __pyx_t_6;
     for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
       __pyx_v_j = __pyx_t_8;
 
-      /* "algorithm_cython.pyx":314
+      /* "algorithm_cython.pyx":319
  *             for j in range( len(boardMatrix[0])):
  *                 #// Check if the selected player has a stone in the current cell
  *                 evaluations = Minimax.evaluate_directions(boardMatrix, i, j, forBlack, playersTurn, evaluations)             # <<<<<<<<<<<<<<
  * 
  *             evaluations = Minimax.evaluate_directions_after_one_pass(evaluations, forBlack, playersTurn)
  */
-      __pyx_t_9 = __pyx_f_16algorithm_cython_7Minimax_evaluate_directions(((PyArrayObject *)__pyx_v_boardMatrix), __pyx_v_i, __pyx_v_j, __pyx_v_forBlack, __pyx_v_playersTurn, __pyx_v_evaluations); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 314, __pyx_L1_error)
+      __pyx_t_9 = __pyx_f_16algorithm_cython_7Minimax_evaluate_directions(((PyArrayObject *)__pyx_v_boardMatrix), __pyx_v_i, __pyx_v_j, __pyx_v_forBlack, __pyx_v_playersTurn, __pyx_v_evaluations); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 319, __pyx_L1_error)
       memcpy(&(__pyx_v_evaluations[0]), __pyx_t_9, sizeof(__pyx_v_evaluations[0]) * (3 - 0));
     }
 
-    /* "algorithm_cython.pyx":316
+    /* "algorithm_cython.pyx":321
  *                 evaluations = Minimax.evaluate_directions(boardMatrix, i, j, forBlack, playersTurn, evaluations)
  * 
  *             evaluations = Minimax.evaluate_directions_after_one_pass(evaluations, forBlack, playersTurn)             # <<<<<<<<<<<<<<
  * 
  *         return evaluations[2]
  */
-    __pyx_t_9 = __pyx_f_16algorithm_cython_7Minimax_evaluate_directions_after_one_pass(__pyx_v_evaluations, __pyx_v_forBlack, __pyx_v_playersTurn); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 316, __pyx_L1_error)
+    __pyx_t_9 = __pyx_f_16algorithm_cython_7Minimax_evaluate_directions_after_one_pass(__pyx_v_evaluations, __pyx_v_forBlack, __pyx_v_playersTurn); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 321, __pyx_L1_error)
     memcpy(&(__pyx_v_evaluations[0]), __pyx_t_9, sizeof(__pyx_v_evaluations[0]) * (3 - 0));
   }
 
-  /* "algorithm_cython.pyx":318
+  /* "algorithm_cython.pyx":323
  *             evaluations = Minimax.evaluate_directions_after_one_pass(evaluations, forBlack, playersTurn)
  * 
  *         return evaluations[2]             # <<<<<<<<<<<<<<
@@ -10588,7 +10658,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_evaluate_horizontal(PyArrayObject
   __pyx_r = (__pyx_v_evaluations[2]);
   goto __pyx_L0;
 
-  /* "algorithm_cython.pyx":303
+  /* "algorithm_cython.pyx":308
  *     # This function calculates the score by evaluating the stone positions in horizontal direction
  *     @staticmethod
  *     cdef int evaluate_horizontal(cnp.ndarray[DTYPE_t, ndim = 2] boardMatrix, int forBlack, int playersTurn):             # <<<<<<<<<<<<<<
@@ -10615,7 +10685,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_evaluate_horizontal(PyArrayObject
   return __pyx_r;
 }
 
-/* "algorithm_cython.pyx":326
+/* "algorithm_cython.pyx":331
  * 
  *     @staticmethod
  *     cdef int evaluate_vertical(cnp.ndarray[DTYPE_t, ndim = 2] boardMatrix, int forBlack,int playersTurn):             # <<<<<<<<<<<<<<
@@ -10650,11 +10720,11 @@ static int __pyx_f_16algorithm_cython_7Minimax_evaluate_vertical(PyArrayObject *
   __pyx_pybuffernd_boardMatrix.rcbuffer = &__pyx_pybuffer_boardMatrix;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_boardMatrix.rcbuffer->pybuffer, (PyObject*)__pyx_v_boardMatrix, &__Pyx_TypeInfo_nn___pyx_t_16algorithm_cython_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 326, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_boardMatrix.rcbuffer->pybuffer, (PyObject*)__pyx_v_boardMatrix, &__Pyx_TypeInfo_nn___pyx_t_16algorithm_cython_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 331, __pyx_L1_error)
   }
   __pyx_pybuffernd_boardMatrix.diminfo[0].strides = __pyx_pybuffernd_boardMatrix.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_boardMatrix.diminfo[0].shape = __pyx_pybuffernd_boardMatrix.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_boardMatrix.diminfo[1].strides = __pyx_pybuffernd_boardMatrix.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_boardMatrix.diminfo[1].shape = __pyx_pybuffernd_boardMatrix.rcbuffer->pybuffer.shape[1];
 
-  /* "algorithm_cython.pyx":327
+  /* "algorithm_cython.pyx":332
  *     @staticmethod
  *     cdef int evaluate_vertical(cnp.ndarray[DTYPE_t, ndim = 2] boardMatrix, int forBlack,int playersTurn):
  *         cdef int[3] evaluations = [0, 2, 0] # [0] -> consecutive count, [1] -> block count, [2] -> score             # <<<<<<<<<<<<<<
@@ -10666,7 +10736,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_evaluate_vertical(PyArrayObject *
   __pyx_t_1[2] = 0;
   memcpy(&(__pyx_v_evaluations[0]), __pyx_t_1, sizeof(__pyx_v_evaluations[0]) * (3));
 
-  /* "algorithm_cython.pyx":328
+  /* "algorithm_cython.pyx":333
  *     cdef int evaluate_vertical(cnp.ndarray[DTYPE_t, ndim = 2] boardMatrix, int forBlack,int playersTurn):
  *         cdef int[3] evaluations = [0, 2, 0] # [0] -> consecutive count, [1] -> block count, [2] -> score
  *         cdef int j = 0             # <<<<<<<<<<<<<<
@@ -10675,7 +10745,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_evaluate_vertical(PyArrayObject *
  */
   __pyx_v_j = 0;
 
-  /* "algorithm_cython.pyx":329
+  /* "algorithm_cython.pyx":334
  *         cdef int[3] evaluations = [0, 2, 0] # [0] -> consecutive count, [1] -> block count, [2] -> score
  *         cdef int j = 0
  *         cdef int i = 0             # <<<<<<<<<<<<<<
@@ -10684,22 +10754,22 @@ static int __pyx_f_16algorithm_cython_7Minimax_evaluate_vertical(PyArrayObject *
  */
   __pyx_v_i = 0;
 
-  /* "algorithm_cython.pyx":330
+  /* "algorithm_cython.pyx":335
  *         cdef int j = 0
  *         cdef int i = 0
  *         for j in range(len(boardMatrix[0])):             # <<<<<<<<<<<<<<
  *             i = 0
  *             for i in range(len(boardMatrix)):
  */
-  __pyx_t_2 = __Pyx_GetItemInt(((PyObject *)__pyx_v_boardMatrix), 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 330, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_GetItemInt(((PyObject *)__pyx_v_boardMatrix), 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 335, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = PyObject_Length(__pyx_t_2); if (unlikely(__pyx_t_3 == ((Py_ssize_t)-1))) __PYX_ERR(0, 330, __pyx_L1_error)
+  __pyx_t_3 = PyObject_Length(__pyx_t_2); if (unlikely(__pyx_t_3 == ((Py_ssize_t)-1))) __PYX_ERR(0, 335, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_t_4 = __pyx_t_3;
   for (__pyx_t_5 = 0; __pyx_t_5 < __pyx_t_4; __pyx_t_5+=1) {
     __pyx_v_j = __pyx_t_5;
 
-    /* "algorithm_cython.pyx":331
+    /* "algorithm_cython.pyx":336
  *         cdef int i = 0
  *         for j in range(len(boardMatrix[0])):
  *             i = 0             # <<<<<<<<<<<<<<
@@ -10708,41 +10778,41 @@ static int __pyx_f_16algorithm_cython_7Minimax_evaluate_vertical(PyArrayObject *
  */
     __pyx_v_i = 0;
 
-    /* "algorithm_cython.pyx":332
+    /* "algorithm_cython.pyx":337
  *         for j in range(len(boardMatrix[0])):
  *             i = 0
  *             for i in range(len(boardMatrix)):             # <<<<<<<<<<<<<<
  *                 evaluations = Minimax.evaluate_directions(boardMatrix, i, j, forBlack, playersTurn, evaluations)
  *             evaluations = Minimax.evaluate_directions_after_one_pass(evaluations, forBlack, playersTurn)
  */
-    __pyx_t_6 = PyObject_Length(((PyObject *)__pyx_v_boardMatrix)); if (unlikely(__pyx_t_6 == ((Py_ssize_t)-1))) __PYX_ERR(0, 332, __pyx_L1_error)
+    __pyx_t_6 = PyObject_Length(((PyObject *)__pyx_v_boardMatrix)); if (unlikely(__pyx_t_6 == ((Py_ssize_t)-1))) __PYX_ERR(0, 337, __pyx_L1_error)
     __pyx_t_7 = __pyx_t_6;
     for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
       __pyx_v_i = __pyx_t_8;
 
-      /* "algorithm_cython.pyx":333
+      /* "algorithm_cython.pyx":338
  *             i = 0
  *             for i in range(len(boardMatrix)):
  *                 evaluations = Minimax.evaluate_directions(boardMatrix, i, j, forBlack, playersTurn, evaluations)             # <<<<<<<<<<<<<<
  *             evaluations = Minimax.evaluate_directions_after_one_pass(evaluations, forBlack, playersTurn)
  *         return evaluations[2]
  */
-      __pyx_t_9 = __pyx_f_16algorithm_cython_7Minimax_evaluate_directions(((PyArrayObject *)__pyx_v_boardMatrix), __pyx_v_i, __pyx_v_j, __pyx_v_forBlack, __pyx_v_playersTurn, __pyx_v_evaluations); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 333, __pyx_L1_error)
+      __pyx_t_9 = __pyx_f_16algorithm_cython_7Minimax_evaluate_directions(((PyArrayObject *)__pyx_v_boardMatrix), __pyx_v_i, __pyx_v_j, __pyx_v_forBlack, __pyx_v_playersTurn, __pyx_v_evaluations); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 338, __pyx_L1_error)
       memcpy(&(__pyx_v_evaluations[0]), __pyx_t_9, sizeof(__pyx_v_evaluations[0]) * (3 - 0));
     }
 
-    /* "algorithm_cython.pyx":334
+    /* "algorithm_cython.pyx":339
  *             for i in range(len(boardMatrix)):
  *                 evaluations = Minimax.evaluate_directions(boardMatrix, i, j, forBlack, playersTurn, evaluations)
  *             evaluations = Minimax.evaluate_directions_after_one_pass(evaluations, forBlack, playersTurn)             # <<<<<<<<<<<<<<
  *         return evaluations[2]
  * 
  */
-    __pyx_t_9 = __pyx_f_16algorithm_cython_7Minimax_evaluate_directions_after_one_pass(__pyx_v_evaluations, __pyx_v_forBlack, __pyx_v_playersTurn); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 334, __pyx_L1_error)
+    __pyx_t_9 = __pyx_f_16algorithm_cython_7Minimax_evaluate_directions_after_one_pass(__pyx_v_evaluations, __pyx_v_forBlack, __pyx_v_playersTurn); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 339, __pyx_L1_error)
     memcpy(&(__pyx_v_evaluations[0]), __pyx_t_9, sizeof(__pyx_v_evaluations[0]) * (3 - 0));
   }
 
-  /* "algorithm_cython.pyx":335
+  /* "algorithm_cython.pyx":340
  *                 evaluations = Minimax.evaluate_directions(boardMatrix, i, j, forBlack, playersTurn, evaluations)
  *             evaluations = Minimax.evaluate_directions_after_one_pass(evaluations, forBlack, playersTurn)
  *         return evaluations[2]             # <<<<<<<<<<<<<<
@@ -10752,7 +10822,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_evaluate_vertical(PyArrayObject *
   __pyx_r = (__pyx_v_evaluations[2]);
   goto __pyx_L0;
 
-  /* "algorithm_cython.pyx":326
+  /* "algorithm_cython.pyx":331
  * 
  *     @staticmethod
  *     cdef int evaluate_vertical(cnp.ndarray[DTYPE_t, ndim = 2] boardMatrix, int forBlack,int playersTurn):             # <<<<<<<<<<<<<<
@@ -10779,7 +10849,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_evaluate_vertical(PyArrayObject *
   return __pyx_r;
 }
 
-/* "algorithm_cython.pyx":338
+/* "algorithm_cython.pyx":343
  * 
  *     @staticmethod
  *     cdef int evaluate_diagonal(cnp.ndarray[DTYPE_t, ndim = 2] boardMatrix, int forBlack, int playersTurn):             # <<<<<<<<<<<<<<
@@ -10818,11 +10888,11 @@ static int __pyx_f_16algorithm_cython_7Minimax_evaluate_diagonal(PyArrayObject *
   __pyx_pybuffernd_boardMatrix.rcbuffer = &__pyx_pybuffer_boardMatrix;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_boardMatrix.rcbuffer->pybuffer, (PyObject*)__pyx_v_boardMatrix, &__Pyx_TypeInfo_nn___pyx_t_16algorithm_cython_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 338, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_boardMatrix.rcbuffer->pybuffer, (PyObject*)__pyx_v_boardMatrix, &__Pyx_TypeInfo_nn___pyx_t_16algorithm_cython_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 343, __pyx_L1_error)
   }
   __pyx_pybuffernd_boardMatrix.diminfo[0].strides = __pyx_pybuffernd_boardMatrix.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_boardMatrix.diminfo[0].shape = __pyx_pybuffernd_boardMatrix.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_boardMatrix.diminfo[1].strides = __pyx_pybuffernd_boardMatrix.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_boardMatrix.diminfo[1].shape = __pyx_pybuffernd_boardMatrix.rcbuffer->pybuffer.shape[1];
 
-  /* "algorithm_cython.pyx":339
+  /* "algorithm_cython.pyx":344
  *     @staticmethod
  *     cdef int evaluate_diagonal(cnp.ndarray[DTYPE_t, ndim = 2] boardMatrix, int forBlack, int playersTurn):
  *         cdef int[3] evaluations = [0, 2, 0]  # [0] -> consecutive count, [1] -> block count, [2] -> score             # <<<<<<<<<<<<<<
@@ -10834,7 +10904,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_evaluate_diagonal(PyArrayObject *
   __pyx_t_1[2] = 0;
   memcpy(&(__pyx_v_evaluations[0]), __pyx_t_1, sizeof(__pyx_v_evaluations[0]) * (3));
 
-  /* "algorithm_cython.pyx":341
+  /* "algorithm_cython.pyx":346
  *         cdef int[3] evaluations = [0, 2, 0]  # [0] -> consecutive count, [1] -> block count, [2] -> score
  *         # From bottom-left to top-right diagonally
  *         cdef int iStart = 0             # <<<<<<<<<<<<<<
@@ -10843,7 +10913,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_evaluate_diagonal(PyArrayObject *
  */
   __pyx_v_iStart = 0;
 
-  /* "algorithm_cython.pyx":342
+  /* "algorithm_cython.pyx":347
  *         # From bottom-left to top-right diagonally
  *         cdef int iStart = 0
  *         cdef int iEnd = 0             # <<<<<<<<<<<<<<
@@ -10852,7 +10922,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_evaluate_diagonal(PyArrayObject *
  */
   __pyx_v_iEnd = 0;
 
-  /* "algorithm_cython.pyx":344
+  /* "algorithm_cython.pyx":349
  *         cdef int iEnd = 0
  * 
  *         cdef int i = 0             # <<<<<<<<<<<<<<
@@ -10861,7 +10931,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_evaluate_diagonal(PyArrayObject *
  */
   __pyx_v_i = 0;
 
-  /* "algorithm_cython.pyx":345
+  /* "algorithm_cython.pyx":350
  * 
  *         cdef int i = 0
  *         cdef int k = 0             # <<<<<<<<<<<<<<
@@ -10870,27 +10940,27 @@ static int __pyx_f_16algorithm_cython_7Minimax_evaluate_diagonal(PyArrayObject *
  */
   __pyx_v_k = 0;
 
-  /* "algorithm_cython.pyx":346
+  /* "algorithm_cython.pyx":351
  *         cdef int i = 0
  *         cdef int k = 0
  *         for k in range(0, 2 * (len(boardMatrix) - 1) + 1):             # <<<<<<<<<<<<<<
  *             iStart = max(0, k - len(boardMatrix) + 1)
  *             iEnd = min(len(boardMatrix) - 1, k)
  */
-  __pyx_t_2 = PyObject_Length(((PyObject *)__pyx_v_boardMatrix)); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(0, 346, __pyx_L1_error)
+  __pyx_t_2 = PyObject_Length(((PyObject *)__pyx_v_boardMatrix)); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(0, 351, __pyx_L1_error)
   __pyx_t_3 = ((2 * (__pyx_t_2 - 1)) + 1);
   __pyx_t_2 = __pyx_t_3;
   for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_2; __pyx_t_4+=1) {
     __pyx_v_k = __pyx_t_4;
 
-    /* "algorithm_cython.pyx":347
+    /* "algorithm_cython.pyx":352
  *         cdef int k = 0
  *         for k in range(0, 2 * (len(boardMatrix) - 1) + 1):
  *             iStart = max(0, k - len(boardMatrix) + 1)             # <<<<<<<<<<<<<<
  *             iEnd = min(len(boardMatrix) - 1, k)
  *             i = 0
  */
-    __pyx_t_5 = PyObject_Length(((PyObject *)__pyx_v_boardMatrix)); if (unlikely(__pyx_t_5 == ((Py_ssize_t)-1))) __PYX_ERR(0, 347, __pyx_L1_error)
+    __pyx_t_5 = PyObject_Length(((PyObject *)__pyx_v_boardMatrix)); if (unlikely(__pyx_t_5 == ((Py_ssize_t)-1))) __PYX_ERR(0, 352, __pyx_L1_error)
     __pyx_t_6 = ((__pyx_v_k - __pyx_t_5) + 1);
     __pyx_t_7 = 0;
     __pyx_t_8 = (__pyx_t_6 > __pyx_t_7);
@@ -10901,7 +10971,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_evaluate_diagonal(PyArrayObject *
     }
     __pyx_v_iStart = __pyx_t_5;
 
-    /* "algorithm_cython.pyx":348
+    /* "algorithm_cython.pyx":353
  *         for k in range(0, 2 * (len(boardMatrix) - 1) + 1):
  *             iStart = max(0, k - len(boardMatrix) + 1)
  *             iEnd = min(len(boardMatrix) - 1, k)             # <<<<<<<<<<<<<<
@@ -10909,7 +10979,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_evaluate_diagonal(PyArrayObject *
  *             for i in range(iStart, iEnd + 1):
  */
     __pyx_t_9 = __pyx_v_k;
-    __pyx_t_5 = PyObject_Length(((PyObject *)__pyx_v_boardMatrix)); if (unlikely(__pyx_t_5 == ((Py_ssize_t)-1))) __PYX_ERR(0, 348, __pyx_L1_error)
+    __pyx_t_5 = PyObject_Length(((PyObject *)__pyx_v_boardMatrix)); if (unlikely(__pyx_t_5 == ((Py_ssize_t)-1))) __PYX_ERR(0, 353, __pyx_L1_error)
     __pyx_t_6 = (__pyx_t_5 - 1);
     __pyx_t_8 = (__pyx_t_9 < __pyx_t_6);
     if (__pyx_t_8) {
@@ -10919,7 +10989,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_evaluate_diagonal(PyArrayObject *
     }
     __pyx_v_iEnd = __pyx_t_5;
 
-    /* "algorithm_cython.pyx":349
+    /* "algorithm_cython.pyx":354
  *             iStart = max(0, k - len(boardMatrix) + 1)
  *             iEnd = min(len(boardMatrix) - 1, k)
  *             i = 0             # <<<<<<<<<<<<<<
@@ -10928,7 +10998,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_evaluate_diagonal(PyArrayObject *
  */
     __pyx_v_i = 0;
 
-    /* "algorithm_cython.pyx":350
+    /* "algorithm_cython.pyx":355
  *             iEnd = min(len(boardMatrix) - 1, k)
  *             i = 0
  *             for i in range(iStart, iEnd + 1):             # <<<<<<<<<<<<<<
@@ -10940,29 +11010,29 @@ static int __pyx_f_16algorithm_cython_7Minimax_evaluate_diagonal(PyArrayObject *
     for (__pyx_t_9 = __pyx_v_iStart; __pyx_t_9 < __pyx_t_10; __pyx_t_9+=1) {
       __pyx_v_i = __pyx_t_9;
 
-      /* "algorithm_cython.pyx":351
+      /* "algorithm_cython.pyx":356
  *             i = 0
  *             for i in range(iStart, iEnd + 1):
  *                 evaluations = Minimax.evaluate_directions(boardMatrix, i, k - i, forBlack, playersTurn, evaluations)             # <<<<<<<<<<<<<<
  *             evaluations = Minimax.evaluate_directions_after_one_pass(evaluations, forBlack, playersTurn)
  * 
  */
-      __pyx_t_11 = __pyx_f_16algorithm_cython_7Minimax_evaluate_directions(((PyArrayObject *)__pyx_v_boardMatrix), __pyx_v_i, (__pyx_v_k - __pyx_v_i), __pyx_v_forBlack, __pyx_v_playersTurn, __pyx_v_evaluations); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 351, __pyx_L1_error)
+      __pyx_t_11 = __pyx_f_16algorithm_cython_7Minimax_evaluate_directions(((PyArrayObject *)__pyx_v_boardMatrix), __pyx_v_i, (__pyx_v_k - __pyx_v_i), __pyx_v_forBlack, __pyx_v_playersTurn, __pyx_v_evaluations); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 356, __pyx_L1_error)
       memcpy(&(__pyx_v_evaluations[0]), __pyx_t_11, sizeof(__pyx_v_evaluations[0]) * (3 - 0));
     }
 
-    /* "algorithm_cython.pyx":352
+    /* "algorithm_cython.pyx":357
  *             for i in range(iStart, iEnd + 1):
  *                 evaluations = Minimax.evaluate_directions(boardMatrix, i, k - i, forBlack, playersTurn, evaluations)
  *             evaluations = Minimax.evaluate_directions_after_one_pass(evaluations, forBlack, playersTurn)             # <<<<<<<<<<<<<<
  * 
  *         # From top-left to bottom-right diagonally
  */
-    __pyx_t_11 = __pyx_f_16algorithm_cython_7Minimax_evaluate_directions_after_one_pass(__pyx_v_evaluations, __pyx_v_forBlack, __pyx_v_playersTurn); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 352, __pyx_L1_error)
+    __pyx_t_11 = __pyx_f_16algorithm_cython_7Minimax_evaluate_directions_after_one_pass(__pyx_v_evaluations, __pyx_v_forBlack, __pyx_v_playersTurn); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 357, __pyx_L1_error)
     memcpy(&(__pyx_v_evaluations[0]), __pyx_t_11, sizeof(__pyx_v_evaluations[0]) * (3 - 0));
   }
 
-  /* "algorithm_cython.pyx":355
+  /* "algorithm_cython.pyx":360
  * 
  *         # From top-left to bottom-right diagonally
  *         i = 0             # <<<<<<<<<<<<<<
@@ -10971,7 +11041,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_evaluate_diagonal(PyArrayObject *
  */
   __pyx_v_i = 0;
 
-  /* "algorithm_cython.pyx":356
+  /* "algorithm_cython.pyx":361
  *         # From top-left to bottom-right diagonally
  *         i = 0
  *         k = 0             # <<<<<<<<<<<<<<
@@ -10980,20 +11050,20 @@ static int __pyx_f_16algorithm_cython_7Minimax_evaluate_diagonal(PyArrayObject *
  */
   __pyx_v_k = 0;
 
-  /* "algorithm_cython.pyx":357
+  /* "algorithm_cython.pyx":362
  *         i = 0
  *         k = 0
  *         for k in range(1 - len(boardMatrix), len(boardMatrix)):             # <<<<<<<<<<<<<<
  *             iStart = max(0, k)
  *             iEnd = min(len(boardMatrix) + k - 1, len(boardMatrix) - 1)
  */
-  __pyx_t_3 = PyObject_Length(((PyObject *)__pyx_v_boardMatrix)); if (unlikely(__pyx_t_3 == ((Py_ssize_t)-1))) __PYX_ERR(0, 357, __pyx_L1_error)
-  __pyx_t_2 = PyObject_Length(((PyObject *)__pyx_v_boardMatrix)); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(0, 357, __pyx_L1_error)
+  __pyx_t_3 = PyObject_Length(((PyObject *)__pyx_v_boardMatrix)); if (unlikely(__pyx_t_3 == ((Py_ssize_t)-1))) __PYX_ERR(0, 362, __pyx_L1_error)
+  __pyx_t_2 = PyObject_Length(((PyObject *)__pyx_v_boardMatrix)); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(0, 362, __pyx_L1_error)
   __pyx_t_5 = __pyx_t_3;
   for (__pyx_t_4 = (1 - __pyx_t_2); __pyx_t_4 < __pyx_t_5; __pyx_t_4+=1) {
     __pyx_v_k = __pyx_t_4;
 
-    /* "algorithm_cython.pyx":358
+    /* "algorithm_cython.pyx":363
  *         k = 0
  *         for k in range(1 - len(boardMatrix), len(boardMatrix)):
  *             iStart = max(0, k)             # <<<<<<<<<<<<<<
@@ -11010,16 +11080,16 @@ static int __pyx_f_16algorithm_cython_7Minimax_evaluate_diagonal(PyArrayObject *
     }
     __pyx_v_iStart = __pyx_t_10;
 
-    /* "algorithm_cython.pyx":359
+    /* "algorithm_cython.pyx":364
  *         for k in range(1 - len(boardMatrix), len(boardMatrix)):
  *             iStart = max(0, k)
  *             iEnd = min(len(boardMatrix) + k - 1, len(boardMatrix) - 1)             # <<<<<<<<<<<<<<
  *             i = 0
  *             for i in range(iStart, iEnd + 1):
  */
-    __pyx_t_6 = PyObject_Length(((PyObject *)__pyx_v_boardMatrix)); if (unlikely(__pyx_t_6 == ((Py_ssize_t)-1))) __PYX_ERR(0, 359, __pyx_L1_error)
+    __pyx_t_6 = PyObject_Length(((PyObject *)__pyx_v_boardMatrix)); if (unlikely(__pyx_t_6 == ((Py_ssize_t)-1))) __PYX_ERR(0, 364, __pyx_L1_error)
     __pyx_t_12 = (__pyx_t_6 - 1);
-    __pyx_t_6 = PyObject_Length(((PyObject *)__pyx_v_boardMatrix)); if (unlikely(__pyx_t_6 == ((Py_ssize_t)-1))) __PYX_ERR(0, 359, __pyx_L1_error)
+    __pyx_t_6 = PyObject_Length(((PyObject *)__pyx_v_boardMatrix)); if (unlikely(__pyx_t_6 == ((Py_ssize_t)-1))) __PYX_ERR(0, 364, __pyx_L1_error)
     __pyx_t_13 = ((__pyx_t_6 + __pyx_v_k) - 1);
     __pyx_t_8 = (__pyx_t_12 < __pyx_t_13);
     if (__pyx_t_8) {
@@ -11029,7 +11099,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_evaluate_diagonal(PyArrayObject *
     }
     __pyx_v_iEnd = __pyx_t_6;
 
-    /* "algorithm_cython.pyx":360
+    /* "algorithm_cython.pyx":365
  *             iStart = max(0, k)
  *             iEnd = min(len(boardMatrix) + k - 1, len(boardMatrix) - 1)
  *             i = 0             # <<<<<<<<<<<<<<
@@ -11038,7 +11108,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_evaluate_diagonal(PyArrayObject *
  */
     __pyx_v_i = 0;
 
-    /* "algorithm_cython.pyx":361
+    /* "algorithm_cython.pyx":366
  *             iEnd = min(len(boardMatrix) + k - 1, len(boardMatrix) - 1)
  *             i = 0
  *             for i in range(iStart, iEnd + 1):             # <<<<<<<<<<<<<<
@@ -11050,29 +11120,29 @@ static int __pyx_f_16algorithm_cython_7Minimax_evaluate_diagonal(PyArrayObject *
     for (__pyx_t_9 = __pyx_v_iStart; __pyx_t_9 < __pyx_t_7; __pyx_t_9+=1) {
       __pyx_v_i = __pyx_t_9;
 
-      /* "algorithm_cython.pyx":362
+      /* "algorithm_cython.pyx":367
  *             i = 0
  *             for i in range(iStart, iEnd + 1):
  *                 evaluations = Minimax.evaluate_directions(boardMatrix, i, i - k, forBlack, playersTurn, evaluations)             # <<<<<<<<<<<<<<
  *             evaluations = Minimax.evaluate_directions_after_one_pass(evaluations, forBlack, playersTurn)
  * 
  */
-      __pyx_t_11 = __pyx_f_16algorithm_cython_7Minimax_evaluate_directions(((PyArrayObject *)__pyx_v_boardMatrix), __pyx_v_i, (__pyx_v_i - __pyx_v_k), __pyx_v_forBlack, __pyx_v_playersTurn, __pyx_v_evaluations); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 362, __pyx_L1_error)
+      __pyx_t_11 = __pyx_f_16algorithm_cython_7Minimax_evaluate_directions(((PyArrayObject *)__pyx_v_boardMatrix), __pyx_v_i, (__pyx_v_i - __pyx_v_k), __pyx_v_forBlack, __pyx_v_playersTurn, __pyx_v_evaluations); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 367, __pyx_L1_error)
       memcpy(&(__pyx_v_evaluations[0]), __pyx_t_11, sizeof(__pyx_v_evaluations[0]) * (3 - 0));
     }
 
-    /* "algorithm_cython.pyx":363
+    /* "algorithm_cython.pyx":368
  *             for i in range(iStart, iEnd + 1):
  *                 evaluations = Minimax.evaluate_directions(boardMatrix, i, i - k, forBlack, playersTurn, evaluations)
  *             evaluations = Minimax.evaluate_directions_after_one_pass(evaluations, forBlack, playersTurn)             # <<<<<<<<<<<<<<
  * 
  *         return evaluations[2]
  */
-    __pyx_t_11 = __pyx_f_16algorithm_cython_7Minimax_evaluate_directions_after_one_pass(__pyx_v_evaluations, __pyx_v_forBlack, __pyx_v_playersTurn); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 363, __pyx_L1_error)
+    __pyx_t_11 = __pyx_f_16algorithm_cython_7Minimax_evaluate_directions_after_one_pass(__pyx_v_evaluations, __pyx_v_forBlack, __pyx_v_playersTurn); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 368, __pyx_L1_error)
     memcpy(&(__pyx_v_evaluations[0]), __pyx_t_11, sizeof(__pyx_v_evaluations[0]) * (3 - 0));
   }
 
-  /* "algorithm_cython.pyx":365
+  /* "algorithm_cython.pyx":370
  *             evaluations = Minimax.evaluate_directions_after_one_pass(evaluations, forBlack, playersTurn)
  * 
  *         return evaluations[2]             # <<<<<<<<<<<<<<
@@ -11082,7 +11152,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_evaluate_diagonal(PyArrayObject *
   __pyx_r = (__pyx_v_evaluations[2]);
   goto __pyx_L0;
 
-  /* "algorithm_cython.pyx":338
+  /* "algorithm_cython.pyx":343
  * 
  *     @staticmethod
  *     cdef int evaluate_diagonal(cnp.ndarray[DTYPE_t, ndim = 2] boardMatrix, int forBlack, int playersTurn):             # <<<<<<<<<<<<<<
@@ -11107,7 +11177,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_evaluate_diagonal(PyArrayObject *
   return __pyx_r;
 }
 
-/* "algorithm_cython.pyx":368
+/* "algorithm_cython.pyx":373
  * 
  *     @staticmethod
  *     cdef int*  evaluate_directions(cnp.ndarray[DTYPE_t, ndim = 2] boardMatrix, int i,int j, int isBot,int botsTurn, int*  eval):             # <<<<<<<<<<<<<<
@@ -11136,20 +11206,20 @@ static int *__pyx_f_16algorithm_cython_7Minimax_evaluate_directions(PyArrayObjec
   __pyx_pybuffernd_boardMatrix.rcbuffer = &__pyx_pybuffer_boardMatrix;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_boardMatrix.rcbuffer->pybuffer, (PyObject*)__pyx_v_boardMatrix, &__Pyx_TypeInfo_nn___pyx_t_16algorithm_cython_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 368, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_boardMatrix.rcbuffer->pybuffer, (PyObject*)__pyx_v_boardMatrix, &__Pyx_TypeInfo_nn___pyx_t_16algorithm_cython_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 373, __pyx_L1_error)
   }
   __pyx_pybuffernd_boardMatrix.diminfo[0].strides = __pyx_pybuffernd_boardMatrix.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_boardMatrix.diminfo[0].shape = __pyx_pybuffernd_boardMatrix.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_boardMatrix.diminfo[1].strides = __pyx_pybuffernd_boardMatrix.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_boardMatrix.diminfo[1].shape = __pyx_pybuffernd_boardMatrix.rcbuffer->pybuffer.shape[1];
 
-  /* "algorithm_cython.pyx":370
+  /* "algorithm_cython.pyx":375
  *     cdef int*  evaluate_directions(cnp.ndarray[DTYPE_t, ndim = 2] boardMatrix, int i,int j, int isBot,int botsTurn, int*  eval):
  *         # Check if the selected player has a stone in the current cell
  *         if boardMatrix[i][j] == (2 if isBot else 1):             # <<<<<<<<<<<<<<
  *             # Increment consecutive stones count
  *             eval[0] += 1
  */
-  __pyx_t_1 = __Pyx_GetItemInt(((PyObject *)__pyx_v_boardMatrix), __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 370, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetItemInt(((PyObject *)__pyx_v_boardMatrix), __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 375, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_GetItemInt(__pyx_t_1, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 370, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_GetItemInt(__pyx_t_1, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 375, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_3 = (__pyx_v_isBot != 0);
@@ -11160,14 +11230,14 @@ static int *__pyx_f_16algorithm_cython_7Minimax_evaluate_directions(PyArrayObjec
     __Pyx_INCREF(__pyx_int_1);
     __pyx_t_1 = __pyx_int_1;
   }
-  __pyx_t_4 = PyObject_RichCompare(__pyx_t_2, __pyx_t_1, Py_EQ); __Pyx_XGOTREF(__pyx_t_4); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 370, __pyx_L1_error)
+  __pyx_t_4 = PyObject_RichCompare(__pyx_t_2, __pyx_t_1, Py_EQ); __Pyx_XGOTREF(__pyx_t_4); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 375, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 370, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 375, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   if (__pyx_t_3) {
 
-    /* "algorithm_cython.pyx":372
+    /* "algorithm_cython.pyx":377
  *         if boardMatrix[i][j] == (2 if isBot else 1):
  *             # Increment consecutive stones count
  *             eval[0] += 1             # <<<<<<<<<<<<<<
@@ -11177,7 +11247,7 @@ static int *__pyx_f_16algorithm_cython_7Minimax_evaluate_directions(PyArrayObjec
     __pyx_t_5 = 0;
     (__pyx_v_eval[__pyx_t_5]) = ((__pyx_v_eval[__pyx_t_5]) + 1);
 
-    /* "algorithm_cython.pyx":370
+    /* "algorithm_cython.pyx":375
  *     cdef int*  evaluate_directions(cnp.ndarray[DTYPE_t, ndim = 2] boardMatrix, int i,int j, int isBot,int botsTurn, int*  eval):
  *         # Check if the selected player has a stone in the current cell
  *         if boardMatrix[i][j] == (2 if isBot else 1):             # <<<<<<<<<<<<<<
@@ -11187,23 +11257,23 @@ static int *__pyx_f_16algorithm_cython_7Minimax_evaluate_directions(PyArrayObjec
     goto __pyx_L3;
   }
 
-  /* "algorithm_cython.pyx":374
+  /* "algorithm_cython.pyx":379
  *             eval[0] += 1
  *         # Check if cell is empty
  *         elif boardMatrix[i][j] == 0:             # <<<<<<<<<<<<<<
  *             # Check if there were any consecutive stones before this empty cell
  *             if eval[0] > 0:
  */
-  __pyx_t_4 = __Pyx_GetItemInt(((PyObject *)__pyx_v_boardMatrix), __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 374, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_GetItemInt(((PyObject *)__pyx_v_boardMatrix), __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 379, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_4, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 374, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_4, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 379, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_3 = (__Pyx_PyInt_BoolEqObjC(__pyx_t_1, __pyx_int_0, 0, 0)); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 374, __pyx_L1_error)
+  __pyx_t_3 = (__Pyx_PyInt_BoolEqObjC(__pyx_t_1, __pyx_int_0, 0, 0)); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 379, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (__pyx_t_3) {
 
-    /* "algorithm_cython.pyx":376
+    /* "algorithm_cython.pyx":381
  *         elif boardMatrix[i][j] == 0:
  *             # Check if there were any consecutive stones before this empty cell
  *             if eval[0] > 0:             # <<<<<<<<<<<<<<
@@ -11213,7 +11283,7 @@ static int *__pyx_f_16algorithm_cython_7Minimax_evaluate_directions(PyArrayObjec
     __pyx_t_3 = ((__pyx_v_eval[0]) > 0);
     if (__pyx_t_3) {
 
-      /* "algorithm_cython.pyx":378
+      /* "algorithm_cython.pyx":383
  *             if eval[0] > 0:
  *                 # Consecutive set is not blocked by opponent, decrement block count
  *                 eval[1] -= 1             # <<<<<<<<<<<<<<
@@ -11223,7 +11293,7 @@ static int *__pyx_f_16algorithm_cython_7Minimax_evaluate_directions(PyArrayObjec
       __pyx_t_5 = 1;
       (__pyx_v_eval[__pyx_t_5]) = ((__pyx_v_eval[__pyx_t_5]) - 1);
 
-      /* "algorithm_cython.pyx":380
+      /* "algorithm_cython.pyx":385
  *                 eval[1] -= 1
  *                 # Get consecutive set score
  *                 eval[2] += Minimax.get_consecutive_set_score(eval[0], eval[1], isBot == botsTurn)             # <<<<<<<<<<<<<<
@@ -11231,10 +11301,10 @@ static int *__pyx_f_16algorithm_cython_7Minimax_evaluate_directions(PyArrayObjec
  *                 eval[0] = 0
  */
       __pyx_t_5 = 2;
-      __pyx_t_6 = __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score((__pyx_v_eval[0]), (__pyx_v_eval[1]), (__pyx_v_isBot == __pyx_v_botsTurn)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 380, __pyx_L1_error)
+      __pyx_t_6 = __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score((__pyx_v_eval[0]), (__pyx_v_eval[1]), (__pyx_v_isBot == __pyx_v_botsTurn)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 385, __pyx_L1_error)
       (__pyx_v_eval[__pyx_t_5]) = ((__pyx_v_eval[__pyx_t_5]) + __pyx_t_6);
 
-      /* "algorithm_cython.pyx":382
+      /* "algorithm_cython.pyx":387
  *                 eval[2] += Minimax.get_consecutive_set_score(eval[0], eval[1], isBot == botsTurn)
  *                 # Reset consecutive stone count
  *                 eval[0] = 0             # <<<<<<<<<<<<<<
@@ -11243,7 +11313,7 @@ static int *__pyx_f_16algorithm_cython_7Minimax_evaluate_directions(PyArrayObjec
  */
       (__pyx_v_eval[0]) = 0;
 
-      /* "algorithm_cython.pyx":376
+      /* "algorithm_cython.pyx":381
  *         elif boardMatrix[i][j] == 0:
  *             # Check if there were any consecutive stones before this empty cell
  *             if eval[0] > 0:             # <<<<<<<<<<<<<<
@@ -11252,7 +11322,7 @@ static int *__pyx_f_16algorithm_cython_7Minimax_evaluate_directions(PyArrayObjec
  */
     }
 
-    /* "algorithm_cython.pyx":386
+    /* "algorithm_cython.pyx":391
  *             # No consecutive stones.
  *             # Current cell is empty, next consecutive set will have at most 1 blocked side.
  *             eval[1] = 1             # <<<<<<<<<<<<<<
@@ -11261,7 +11331,7 @@ static int *__pyx_f_16algorithm_cython_7Minimax_evaluate_directions(PyArrayObjec
  */
     (__pyx_v_eval[1]) = 1;
 
-    /* "algorithm_cython.pyx":374
+    /* "algorithm_cython.pyx":379
  *             eval[0] += 1
  *         # Check if cell is empty
  *         elif boardMatrix[i][j] == 0:             # <<<<<<<<<<<<<<
@@ -11271,7 +11341,7 @@ static int *__pyx_f_16algorithm_cython_7Minimax_evaluate_directions(PyArrayObjec
     goto __pyx_L3;
   }
 
-  /* "algorithm_cython.pyx":389
+  /* "algorithm_cython.pyx":394
  *         # Cell is occupied by opponent
  *         # Check if there were any consecutive stones before this empty cell
  *         elif eval[0] > 0:             # <<<<<<<<<<<<<<
@@ -11281,7 +11351,7 @@ static int *__pyx_f_16algorithm_cython_7Minimax_evaluate_directions(PyArrayObjec
   __pyx_t_3 = ((__pyx_v_eval[0]) > 0);
   if (__pyx_t_3) {
 
-    /* "algorithm_cython.pyx":391
+    /* "algorithm_cython.pyx":396
  *         elif eval[0] > 0:
  *             # Get consecutive set score
  *             eval[2] += Minimax.get_consecutive_set_score(eval[0], eval[1], isBot == botsTurn)             # <<<<<<<<<<<<<<
@@ -11289,10 +11359,10 @@ static int *__pyx_f_16algorithm_cython_7Minimax_evaluate_directions(PyArrayObjec
  *             eval[0] = 0
  */
     __pyx_t_5 = 2;
-    __pyx_t_6 = __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score((__pyx_v_eval[0]), (__pyx_v_eval[1]), (__pyx_v_isBot == __pyx_v_botsTurn)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 391, __pyx_L1_error)
+    __pyx_t_6 = __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score((__pyx_v_eval[0]), (__pyx_v_eval[1]), (__pyx_v_isBot == __pyx_v_botsTurn)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 396, __pyx_L1_error)
     (__pyx_v_eval[__pyx_t_5]) = ((__pyx_v_eval[__pyx_t_5]) + __pyx_t_6);
 
-    /* "algorithm_cython.pyx":393
+    /* "algorithm_cython.pyx":398
  *             eval[2] += Minimax.get_consecutive_set_score(eval[0], eval[1], isBot == botsTurn)
  *             # Reset consecutive stone count
  *             eval[0] = 0             # <<<<<<<<<<<<<<
@@ -11301,7 +11371,7 @@ static int *__pyx_f_16algorithm_cython_7Minimax_evaluate_directions(PyArrayObjec
  */
     (__pyx_v_eval[0]) = 0;
 
-    /* "algorithm_cython.pyx":395
+    /* "algorithm_cython.pyx":400
  *             eval[0] = 0
  *             # Current cell is occupied by opponent, next consecutive set may have 2 blocked sides
  *             eval[1] = 2             # <<<<<<<<<<<<<<
@@ -11310,7 +11380,7 @@ static int *__pyx_f_16algorithm_cython_7Minimax_evaluate_directions(PyArrayObjec
  */
     (__pyx_v_eval[1]) = 2;
 
-    /* "algorithm_cython.pyx":389
+    /* "algorithm_cython.pyx":394
  *         # Cell is occupied by opponent
  *         # Check if there were any consecutive stones before this empty cell
  *         elif eval[0] > 0:             # <<<<<<<<<<<<<<
@@ -11320,7 +11390,7 @@ static int *__pyx_f_16algorithm_cython_7Minimax_evaluate_directions(PyArrayObjec
     goto __pyx_L3;
   }
 
-  /* "algorithm_cython.pyx":398
+  /* "algorithm_cython.pyx":403
  *         else:
  *             # Current cell is occupied by opponent, next consecutive set may have 2 blocked sides
  *             eval[1] = 2             # <<<<<<<<<<<<<<
@@ -11332,7 +11402,7 @@ static int *__pyx_f_16algorithm_cython_7Minimax_evaluate_directions(PyArrayObjec
   }
   __pyx_L3:;
 
-  /* "algorithm_cython.pyx":399
+  /* "algorithm_cython.pyx":404
  *             # Current cell is occupied by opponent, next consecutive set may have 2 blocked sides
  *             eval[1] = 2
  *         return eval             # <<<<<<<<<<<<<<
@@ -11342,7 +11412,7 @@ static int *__pyx_f_16algorithm_cython_7Minimax_evaluate_directions(PyArrayObjec
   __pyx_r = __pyx_v_eval;
   goto __pyx_L0;
 
-  /* "algorithm_cython.pyx":368
+  /* "algorithm_cython.pyx":373
  * 
  *     @staticmethod
  *     cdef int*  evaluate_directions(cnp.ndarray[DTYPE_t, ndim = 2] boardMatrix, int i,int j, int isBot,int botsTurn, int*  eval):             # <<<<<<<<<<<<<<
@@ -11371,7 +11441,7 @@ static int *__pyx_f_16algorithm_cython_7Minimax_evaluate_directions(PyArrayObjec
   return __pyx_r;
 }
 
-/* "algorithm_cython.pyx":402
+/* "algorithm_cython.pyx":407
  * 
  *     @staticmethod
  *     cdef int*  evaluate_directions_after_one_pass(int[3] eval,int isBot, int playersTurn):             # <<<<<<<<<<<<<<
@@ -11388,7 +11458,7 @@ static int *__pyx_f_16algorithm_cython_7Minimax_evaluate_directions_after_one_pa
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
 
-  /* "algorithm_cython.pyx":404
+  /* "algorithm_cython.pyx":409
  *     cdef int*  evaluate_directions_after_one_pass(int[3] eval,int isBot, int playersTurn):
  *         # End of row, check if there were any consecutive stones before we reached right border
  *         if eval[0] > 0:             # <<<<<<<<<<<<<<
@@ -11398,7 +11468,7 @@ static int *__pyx_f_16algorithm_cython_7Minimax_evaluate_directions_after_one_pa
   __pyx_t_1 = ((__pyx_v_eval[0]) > 0);
   if (__pyx_t_1) {
 
-    /* "algorithm_cython.pyx":405
+    /* "algorithm_cython.pyx":410
  *         # End of row, check if there were any consecutive stones before we reached right border
  *         if eval[0] > 0:
  *             eval[2] += Minimax.get_consecutive_set_score(eval[0], eval[1], isBot == playersTurn)             # <<<<<<<<<<<<<<
@@ -11406,10 +11476,10 @@ static int *__pyx_f_16algorithm_cython_7Minimax_evaluate_directions_after_one_pa
  *         eval[0] = 0
  */
     __pyx_t_2 = 2;
-    __pyx_t_3 = __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score((__pyx_v_eval[0]), (__pyx_v_eval[1]), (__pyx_v_isBot == __pyx_v_playersTurn)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 405, __pyx_L1_error)
+    __pyx_t_3 = __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score((__pyx_v_eval[0]), (__pyx_v_eval[1]), (__pyx_v_isBot == __pyx_v_playersTurn)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 410, __pyx_L1_error)
     (__pyx_v_eval[__pyx_t_2]) = ((__pyx_v_eval[__pyx_t_2]) + __pyx_t_3);
 
-    /* "algorithm_cython.pyx":404
+    /* "algorithm_cython.pyx":409
  *     cdef int*  evaluate_directions_after_one_pass(int[3] eval,int isBot, int playersTurn):
  *         # End of row, check if there were any consecutive stones before we reached right border
  *         if eval[0] > 0:             # <<<<<<<<<<<<<<
@@ -11418,7 +11488,7 @@ static int *__pyx_f_16algorithm_cython_7Minimax_evaluate_directions_after_one_pa
  */
   }
 
-  /* "algorithm_cython.pyx":407
+  /* "algorithm_cython.pyx":412
  *             eval[2] += Minimax.get_consecutive_set_score(eval[0], eval[1], isBot == playersTurn)
  *         # Reset consecutive stone and blocks count
  *         eval[0] = 0             # <<<<<<<<<<<<<<
@@ -11427,7 +11497,7 @@ static int *__pyx_f_16algorithm_cython_7Minimax_evaluate_directions_after_one_pa
  */
   (__pyx_v_eval[0]) = 0;
 
-  /* "algorithm_cython.pyx":408
+  /* "algorithm_cython.pyx":413
  *         # Reset consecutive stone and blocks count
  *         eval[0] = 0
  *         eval[1] = 2             # <<<<<<<<<<<<<<
@@ -11436,7 +11506,7 @@ static int *__pyx_f_16algorithm_cython_7Minimax_evaluate_directions_after_one_pa
  */
   (__pyx_v_eval[1]) = 2;
 
-  /* "algorithm_cython.pyx":409
+  /* "algorithm_cython.pyx":414
  *         eval[0] = 0
  *         eval[1] = 2
  *         return eval             # <<<<<<<<<<<<<<
@@ -11446,7 +11516,7 @@ static int *__pyx_f_16algorithm_cython_7Minimax_evaluate_directions_after_one_pa
   __pyx_r = __pyx_v_eval;
   goto __pyx_L0;
 
-  /* "algorithm_cython.pyx":402
+  /* "algorithm_cython.pyx":407
  * 
  *     @staticmethod
  *     cdef int*  evaluate_directions_after_one_pass(int[3] eval,int isBot, int playersTurn):             # <<<<<<<<<<<<<<
@@ -11462,7 +11532,7 @@ static int *__pyx_f_16algorithm_cython_7Minimax_evaluate_directions_after_one_pa
   return __pyx_r;
 }
 
-/* "algorithm_cython.pyx":416
+/* "algorithm_cython.pyx":421
  *     # blocks: Number of blocked sides of the set (2: both sides blocked, 1: single side blocked, 0: both sides free)
  *     @staticmethod
  *     cdef int get_consecutive_set_score(int count, int blocks,int currentTurn):             # <<<<<<<<<<<<<<
@@ -11480,7 +11550,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
 
-  /* "algorithm_cython.pyx":417
+  /* "algorithm_cython.pyx":422
  *     @staticmethod
  *     cdef int get_consecutive_set_score(int count, int blocks,int currentTurn):
  *         cdef int winGuarantee = 1000000             # <<<<<<<<<<<<<<
@@ -11489,7 +11559,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
  */
   __pyx_v_winGuarantee = 0xF4240;
 
-  /* "algorithm_cython.pyx":420
+  /* "algorithm_cython.pyx":425
  * 
  *         # If both sides of a set are blocked, this set is worthless return 0 points.
  *         if (blocks == 2 and count < 5):             # <<<<<<<<<<<<<<
@@ -11507,7 +11577,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
   __pyx_L4_bool_binop_done:;
   if (__pyx_t_1) {
 
-    /* "algorithm_cython.pyx":421
+    /* "algorithm_cython.pyx":426
  *         # If both sides of a set are blocked, this set is worthless return 0 points.
  *         if (blocks == 2 and count < 5):
  *             return 0             # <<<<<<<<<<<<<<
@@ -11517,7 +11587,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
     __pyx_r = 0;
     goto __pyx_L0;
 
-    /* "algorithm_cython.pyx":420
+    /* "algorithm_cython.pyx":425
  * 
  *         # If both sides of a set are blocked, this set is worthless return 0 points.
  *         if (blocks == 2 and count < 5):             # <<<<<<<<<<<<<<
@@ -11526,7 +11596,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
  */
   }
 
-  /* "algorithm_cython.pyx":423
+  /* "algorithm_cython.pyx":428
  *             return 0
  * 
  *         if (count == 5):             # <<<<<<<<<<<<<<
@@ -11536,18 +11606,18 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
   switch (__pyx_v_count) {
     case 5:
 
-    /* "algorithm_cython.pyx":425
+    /* "algorithm_cython.pyx":430
  *         if (count == 5):
  *             # 5 consecutive wins the game
  *             return Minimax.get_win_score()             # <<<<<<<<<<<<<<
  *         elif (count == 4):
  *             # 4 consecutive stones in the user's turn guarantees a win.
  */
-    __pyx_t_3 = __pyx_f_16algorithm_cython_7Minimax_get_win_score(); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 425, __pyx_L1_error)
+    __pyx_t_3 = __pyx_f_16algorithm_cython_7Minimax_get_win_score(); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 430, __pyx_L1_error)
     __pyx_r = __pyx_t_3;
     goto __pyx_L0;
 
-    /* "algorithm_cython.pyx":423
+    /* "algorithm_cython.pyx":428
  *             return 0
  * 
  *         if (count == 5):             # <<<<<<<<<<<<<<
@@ -11557,7 +11627,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
     break;
     case 4:
 
-    /* "algorithm_cython.pyx":429
+    /* "algorithm_cython.pyx":434
  *             # 4 consecutive stones in the user's turn guarantees a win.
  *             # (User can win the game by placing the 5th stone after the set)
  *             if (currentTurn):             # <<<<<<<<<<<<<<
@@ -11567,7 +11637,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
     __pyx_t_1 = (__pyx_v_currentTurn != 0);
     if (__pyx_t_1) {
 
-      /* "algorithm_cython.pyx":430
+      /* "algorithm_cython.pyx":435
  *             # (User can win the game by placing the 5th stone after the set)
  *             if (currentTurn):
  *                 return winGuarantee             # <<<<<<<<<<<<<<
@@ -11577,7 +11647,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
       __pyx_r = __pyx_v_winGuarantee;
       goto __pyx_L0;
 
-      /* "algorithm_cython.pyx":429
+      /* "algorithm_cython.pyx":434
  *             # 4 consecutive stones in the user's turn guarantees a win.
  *             # (User can win the game by placing the 5th stone after the set)
  *             if (currentTurn):             # <<<<<<<<<<<<<<
@@ -11586,7 +11656,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
  */
     }
 
-    /* "algorithm_cython.pyx":434
+    /* "algorithm_cython.pyx":439
  *                 # Opponent's turn
  *                 # If neither side is blocked, 4 consecutive stones guarantees a win in the next turn.
  *                 if (blocks == 0):             # <<<<<<<<<<<<<<
@@ -11597,7 +11667,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
       __pyx_t_1 = (__pyx_v_blocks == 0);
       if (__pyx_t_1) {
 
-        /* "algorithm_cython.pyx":435
+        /* "algorithm_cython.pyx":440
  *                 # If neither side is blocked, 4 consecutive stones guarantees a win in the next turn.
  *                 if (blocks == 0):
  *                     return winGuarantee // 4             # <<<<<<<<<<<<<<
@@ -11607,7 +11677,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
         __pyx_r = __Pyx_div_long(__pyx_v_winGuarantee, 4);
         goto __pyx_L0;
 
-        /* "algorithm_cython.pyx":434
+        /* "algorithm_cython.pyx":439
  *                 # Opponent's turn
  *                 # If neither side is blocked, 4 consecutive stones guarantees a win in the next turn.
  *                 if (blocks == 0):             # <<<<<<<<<<<<<<
@@ -11616,7 +11686,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
  */
       }
 
-      /* "algorithm_cython.pyx":440
+      /* "algorithm_cython.pyx":445
  *                 # in the next turn). So a relatively high score is given for this set.
  *                 else:
  *                     return 200             # <<<<<<<<<<<<<<
@@ -11629,7 +11699,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
       }
     }
 
-    /* "algorithm_cython.pyx":426
+    /* "algorithm_cython.pyx":431
  *             # 5 consecutive wins the game
  *             return Minimax.get_win_score()
  *         elif (count == 4):             # <<<<<<<<<<<<<<
@@ -11639,7 +11709,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
     break;
     case 3:
 
-    /* "algorithm_cython.pyx":443
+    /* "algorithm_cython.pyx":448
  *         elif (count) == 3:
  *             # 3 consecutive stones
  *             if blocks == 0:             # <<<<<<<<<<<<<<
@@ -11649,7 +11719,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
     __pyx_t_1 = (__pyx_v_blocks == 0);
     if (__pyx_t_1) {
 
-      /* "algorithm_cython.pyx":449
+      /* "algorithm_cython.pyx":454
  *                 # However, the opponent may win the game in the next turn, therefore this score is lower than win
  *                 # guaranteed scores but still a very high score.
  *                 if (currentTurn):             # <<<<<<<<<<<<<<
@@ -11659,7 +11729,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
       __pyx_t_1 = (__pyx_v_currentTurn != 0);
       if (__pyx_t_1) {
 
-        /* "algorithm_cython.pyx":450
+        /* "algorithm_cython.pyx":455
  *                 # guaranteed scores but still a very high score.
  *                 if (currentTurn):
  *                     return 50_000             # <<<<<<<<<<<<<<
@@ -11669,7 +11739,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
         __pyx_r = 0xC350;
         goto __pyx_L0;
 
-        /* "algorithm_cython.pyx":449
+        /* "algorithm_cython.pyx":454
  *                 # However, the opponent may win the game in the next turn, therefore this score is lower than win
  *                 # guaranteed scores but still a very high score.
  *                 if (currentTurn):             # <<<<<<<<<<<<<<
@@ -11678,7 +11748,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
  */
       }
 
-      /* "algorithm_cython.pyx":454
+      /* "algorithm_cython.pyx":459
  *                 # So a relatively high score is given for this set.
  *                 else:
  *                     return 200             # <<<<<<<<<<<<<<
@@ -11690,7 +11760,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
         goto __pyx_L0;
       }
 
-      /* "algorithm_cython.pyx":443
+      /* "algorithm_cython.pyx":448
  *         elif (count) == 3:
  *             # 3 consecutive stones
  *             if blocks == 0:             # <<<<<<<<<<<<<<
@@ -11699,7 +11769,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
  */
     }
 
-    /* "algorithm_cython.pyx":458
+    /* "algorithm_cython.pyx":463
  *                 # One of the sides is blocked.
  *                 # Playmaker scores
  *                 if (currentTurn):             # <<<<<<<<<<<<<<
@@ -11710,7 +11780,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
       __pyx_t_1 = (__pyx_v_currentTurn != 0);
       if (__pyx_t_1) {
 
-        /* "algorithm_cython.pyx":459
+        /* "algorithm_cython.pyx":464
  *                 # Playmaker scores
  *                 if (currentTurn):
  *                     return 10             # <<<<<<<<<<<<<<
@@ -11720,7 +11790,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
         __pyx_r = 10;
         goto __pyx_L0;
 
-        /* "algorithm_cython.pyx":458
+        /* "algorithm_cython.pyx":463
  *                 # One of the sides is blocked.
  *                 # Playmaker scores
  *                 if (currentTurn):             # <<<<<<<<<<<<<<
@@ -11729,7 +11799,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
  */
       }
 
-      /* "algorithm_cython.pyx":461
+      /* "algorithm_cython.pyx":466
  *                     return 10
  *                 else:
  *                     return 5             # <<<<<<<<<<<<<<
@@ -11742,7 +11812,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
       }
     }
 
-    /* "algorithm_cython.pyx":441
+    /* "algorithm_cython.pyx":446
  *                 else:
  *                     return 200
  *         elif (count) == 3:             # <<<<<<<<<<<<<<
@@ -11752,7 +11822,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
     break;
     case 2:
 
-    /* "algorithm_cython.pyx":465
+    /* "algorithm_cython.pyx":470
  *             # 2 consecutive stones
  *             # Playmaker scores
  *             if (blocks == 0):             # <<<<<<<<<<<<<<
@@ -11762,7 +11832,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
     __pyx_t_1 = (__pyx_v_blocks == 0);
     if (__pyx_t_1) {
 
-      /* "algorithm_cython.pyx":466
+      /* "algorithm_cython.pyx":471
  *             # Playmaker scores
  *             if (blocks == 0):
  *                 if (currentTurn):             # <<<<<<<<<<<<<<
@@ -11772,7 +11842,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
       __pyx_t_1 = (__pyx_v_currentTurn != 0);
       if (__pyx_t_1) {
 
-        /* "algorithm_cython.pyx":467
+        /* "algorithm_cython.pyx":472
  *             if (blocks == 0):
  *                 if (currentTurn):
  *                     return 7             # <<<<<<<<<<<<<<
@@ -11782,7 +11852,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
         __pyx_r = 7;
         goto __pyx_L0;
 
-        /* "algorithm_cython.pyx":466
+        /* "algorithm_cython.pyx":471
  *             # Playmaker scores
  *             if (blocks == 0):
  *                 if (currentTurn):             # <<<<<<<<<<<<<<
@@ -11791,7 +11861,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
  */
       }
 
-      /* "algorithm_cython.pyx":469
+      /* "algorithm_cython.pyx":474
  *                     return 7
  *                 else:
  *                     return 5             # <<<<<<<<<<<<<<
@@ -11803,7 +11873,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
         goto __pyx_L0;
       }
 
-      /* "algorithm_cython.pyx":465
+      /* "algorithm_cython.pyx":470
  *             # 2 consecutive stones
  *             # Playmaker scores
  *             if (blocks == 0):             # <<<<<<<<<<<<<<
@@ -11812,7 +11882,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
  */
     }
 
-    /* "algorithm_cython.pyx":471
+    /* "algorithm_cython.pyx":476
  *                     return 5
  *             else:
  *                 return 3             # <<<<<<<<<<<<<<
@@ -11824,7 +11894,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
       goto __pyx_L0;
     }
 
-    /* "algorithm_cython.pyx":462
+    /* "algorithm_cython.pyx":467
  *                 else:
  *                     return 5
  *         elif (count == 2):             # <<<<<<<<<<<<<<
@@ -11834,7 +11904,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
     break;
     case 1:
 
-    /* "algorithm_cython.pyx":473
+    /* "algorithm_cython.pyx":478
  *                 return 3
  *         elif (count == 1):
  *             return 1             # <<<<<<<<<<<<<<
@@ -11844,7 +11914,7 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
     __pyx_r = 1;
     goto __pyx_L0;
 
-    /* "algorithm_cython.pyx":472
+    /* "algorithm_cython.pyx":477
  *             else:
  *                 return 3
  *         elif (count == 1):             # <<<<<<<<<<<<<<
@@ -11855,18 +11925,18 @@ static int __pyx_f_16algorithm_cython_7Minimax_get_consecutive_set_score(int __p
     default: break;
   }
 
-  /* "algorithm_cython.pyx":476
+  /* "algorithm_cython.pyx":481
  * 
  *         # More than 5 consecutive stones?
  *         return Minimax.get_win_score() * 2             # <<<<<<<<<<<<<<
  * 
  * 
  */
-  __pyx_t_3 = __pyx_f_16algorithm_cython_7Minimax_get_win_score(); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 476, __pyx_L1_error)
+  __pyx_t_3 = __pyx_f_16algorithm_cython_7Minimax_get_win_score(); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 481, __pyx_L1_error)
   __pyx_r = (__pyx_t_3 * 2);
   goto __pyx_L0;
 
-  /* "algorithm_cython.pyx":416
+  /* "algorithm_cython.pyx":421
  *     # blocks: Number of blocked sides of the set (2: both sides blocked, 1: single side blocked, 0: both sides free)
  *     @staticmethod
  *     cdef int get_consecutive_set_score(int count, int blocks,int currentTurn):             # <<<<<<<<<<<<<<
@@ -13491,6 +13561,8 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_pyx_unpickle_Board, __pyx_k_pyx_unpickle_Board, sizeof(__pyx_k_pyx_unpickle_Board), 0, 0, 1, 1},
     {&__pyx_n_s_pyx_unpickle_Minimax, __pyx_k_pyx_unpickle_Minimax, sizeof(__pyx_k_pyx_unpickle_Minimax), 0, 0, 1, 1},
     {&__pyx_n_s_pyx_vtable, __pyx_k_pyx_vtable, sizeof(__pyx_k_pyx_vtable), 0, 0, 1, 1},
+    {&__pyx_n_s_rand_x, __pyx_k_rand_x, sizeof(__pyx_k_rand_x), 0, 0, 1, 1},
+    {&__pyx_n_s_rand_y, __pyx_k_rand_y, sizeof(__pyx_k_rand_y), 0, 0, 1, 1},
     {&__pyx_n_s_range, __pyx_k_range, sizeof(__pyx_k_range), 0, 0, 1, 1},
     {&__pyx_n_s_reduce, __pyx_k_reduce, sizeof(__pyx_k_reduce), 0, 0, 1, 1},
     {&__pyx_n_s_reduce_cython, __pyx_k_reduce_cython, sizeof(__pyx_k_reduce_cython), 0, 0, 1, 1},
@@ -13621,10 +13693,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     def calculate_next_move(cnp.ndarray[DTYPE_t, ndim = 2] matrix, int depth):
  *         # Block the board_matrix for AI to make a decision.
  */
-  __pyx_tuple__15 = PyTuple_Pack(5, __pyx_n_s_matrix, __pyx_n_s_depth, __pyx_n_s_move, __pyx_n_s_bestMove, __pyx_n_s_tmp_board_matrix); if (unlikely(!__pyx_tuple__15)) __PYX_ERR(0, 142, __pyx_L1_error)
+  __pyx_tuple__15 = PyTuple_Pack(7, __pyx_n_s_matrix, __pyx_n_s_depth, __pyx_n_s_move, __pyx_n_s_rand_x, __pyx_n_s_rand_y, __pyx_n_s_bestMove, __pyx_n_s_tmp_board_matrix); if (unlikely(!__pyx_tuple__15)) __PYX_ERR(0, 142, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__15);
   __Pyx_GIVEREF(__pyx_tuple__15);
-  __pyx_codeobj__16 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__15, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_algorithm_cython_pyx, __pyx_n_s_calculate_next_move, 142, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__16)) __PYX_ERR(0, 142, __pyx_L1_error)
+  __pyx_codeobj__16 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 7, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__15, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_algorithm_cython_pyx, __pyx_n_s_calculate_next_move, 142, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__16)) __PYX_ERR(0, 142, __pyx_L1_error)
 
   /* "(tree fragment)":1
  * def __reduce_cython__(self):             # <<<<<<<<<<<<<<
@@ -16642,18 +16714,6 @@ static CYTHON_INLINE PyObject *__Pyx_GetAttr3(PyObject *o, PyObject *n, PyObject
 #endif
 }
 
-/* BufferIndexError */
-  static void __Pyx_RaiseBufferIndexError(int axis) {
-  PyErr_Format(PyExc_IndexError,
-     "Out of bounds on buffer access (axis %d)", axis);
-}
-
-/* BufferFallbackError */
-  static void __Pyx_RaiseBufferFallbackError(void) {
-  PyErr_SetString(PyExc_ValueError,
-     "Buffer acquisition failed on assignment; and then reacquiring the old buffer failed too!");
-}
-
 /* ModInt[long] */
   static CYTHON_INLINE long __Pyx_mod_long(long a, long b) {
     long r = a % b;
@@ -16731,6 +16791,18 @@ static CYTHON_INLINE PyObject *__Pyx_GetAttr3(PyObject *o, PyObject *n, PyObject
     }
     return __Pyx_PyObject_IsTrueAndDecref(
         PyObject_RichCompare(op1, op2, Py_NE));
+}
+
+/* BufferIndexError */
+  static void __Pyx_RaiseBufferIndexError(int axis) {
+  PyErr_Format(PyExc_IndexError,
+     "Out of bounds on buffer access (axis %d)", axis);
+}
+
+/* BufferFallbackError */
+  static void __Pyx_RaiseBufferFallbackError(void) {
+  PyErr_SetString(PyExc_ValueError,
+     "Buffer acquisition failed on assignment; and then reacquiring the old buffer failed too!");
 }
 
 /* PyIntCompare */
