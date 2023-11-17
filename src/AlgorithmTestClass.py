@@ -1,6 +1,6 @@
 #from algorithm import Minimax
 from Cython.Build import cythonize
-import distutils
+
 import time
 import pyximport
 pyximport.install()
