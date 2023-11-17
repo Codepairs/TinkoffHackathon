@@ -3,7 +3,6 @@ import os
 from json import loads
 from LoggerClass import Logger
 from flask import Flask, request
-from SolverClass import Solver
 from AlgorithmTestClass import Test
 from threading import Thread
 
@@ -23,18 +22,18 @@ class Bot:
         self._figure = self._registration_request()
         self._logger.send_message(f"BOT_URL: {self._bot_url}", "info")
         self._current_game_field = '_' * 361
-        #self._solver =
-        #self._solver = Solver(self._current_game_field, self._figure)
         self._thread = None
         self._app = Flask(__name__)
 
         @self._app.route('/bot/turn', methods=["POST"])
         def make_turn():
             current_game_field = request.json.get("game_field")
-            #server_response = self._solver.make_random_move(current_game_field, self._figure)
-            server_response = Test.make_random_move(current_game_field)
+            server_response = Test.make_algo_move(current_game_field, self._figure, self._opposite_figure())
             self._logger.send_message(f"Запрос {request} был принят! Ответ сервера: {server_response}", "info")
             return {"game_field": server_response}
+
+    def _opposite_figure(self):
+        return 'x' if self._figure == 'o' else 'o'
 
     def _registration_request(self):
         """
