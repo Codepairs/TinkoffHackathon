@@ -143,7 +143,12 @@ cdef class Minimax:
     def calculate_next_move(cnp.ndarray[DTYPE_t, ndim = 2] matrix, int depth):
         # Block the board_matrix for AI to make a decision.
         cdef int[2] move = [0, 0]
-
+        cdef int rand_x = rand()%19, rand_y = rand()%19
+        while (matrix[rand_y][rand_x]!=0):
+             rand_x = rand()%19
+             rand_y = rand()%19
+        
+        move = [rand_y, rand_x]
         # Used for benchmarking purposes only.
         '''
         cdef timespec ts
