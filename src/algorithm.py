@@ -7,11 +7,7 @@ class Minimax:
     def get_win_score():
         return Minimax.WIN_SCORE
 
-    '''
-    // This function calculates the relative score of the white player against the black.
-    // (i.e. how likely is white player to win the game before the black player)
-    // This value will be used as the score in the Minimax algorithm.
-    '''
+
     @staticmethod
     def evaluate_board_for_white(board, blackTurn: bool):
         #self.evaluationCount+=1
@@ -25,11 +21,6 @@ class Minimax:
         return whiteScore/blackScore
 
 
-    '''
-    // This function calculates the board_matrix score of the specified player.
-    // (i.e. How good a player's general standing on the board_matrix by considering how many 
-    //  consecutive 2's, 3's, 4's it has, how many of them are blocked etc...)
-    '''
     @staticmethod
     def get_score(boardMatrix, forBlack: bool, blacksTurn: bool):
         # Read the board_matrix
@@ -108,37 +99,16 @@ class Minimax:
                 Board.add_stone(dummy_board_matrix, move[1], move[0], False)
 
                 # Call the minimax function for the next depth, to look for a minimum score.
-                '''
-                // Call the minimax function for the next depth, to look for a minimum score.
-                // This function recursively generates new Minimax trees branching from this node 
-                // (if the depth > 0) and searches for the minimum white score in each of the sub trees.
-                // We will find the maximum score of this depth, among the minimum scores found in the
-                // lower depth.
-                '''
                 temp_move = Minimax.minimax_search_ab(depth - 1, dummy_board_matrix, False, alpha, beta)
 
                 # Backtrack and remove.
                 Board.remove_stone(dummy_board_matrix, move[1], move[0])
 
                 # Updating alpha (alpha value holds the maximum score)
-                '''
-                // Updating alpha (alpha value holds the maximum score)
-                // When searching for the minimum, if the score of a node is lower than the alpha 
-                // (max score of uncle nodes from one upper level) the whole subtree originating
-                // from that node will be discarded, since the maximizing player will choose the 
-                // alpha node over any node with a score lower than the alpha. 
-                '''
+                
                 if temp_move[0] > alpha:
                     alpha = temp_move[0]
 
-                '''
-                // Pruning with beta
-                // Beta value holds the minimum score among the uncle nodes from one upper level.
-                // We need to find a score lower than this beta score, because any score higher than
-                // beta will be eliminated by the minimizing player (upper level). If the score is
-                // higher than (or equal to) beta, break out of loop discarding any remaining nodes 
-                // and/or subtrees and return the last move.
-                '''
                 if temp_move[0] >= beta:
                     return temp_move
 
@@ -160,34 +130,13 @@ class Minimax:
                 # Play the move on the temporary board_matrix without drawing anything.
                 Board.add_stone(dummy_board_matrix, move[1], move[0], True)
 
-                '''
-                // Call the minimax function for the next depth, to look for a maximum score.
-                // This function recursively generates new Minimax trees branching from this node 
-                // (if the depth > 0) and searches for the maximum white score in each of the sub trees.
-                // We will find the minimum score of this depth, among the maximum scores found in the
-                // lower depth.
-                '''
                 temp_move = Minimax.minimax_search_ab(depth - 1, dummy_board_matrix, True, alpha, beta)
 
                 Board.remove_stone(dummy_board_matrix, move[1], move[0])
 
-                '''
-                // Updating beta (beta value holds the minimum score)
-                // When searching for the maximum, if the score of a node is higher than the beta 
-                // (min score of uncle nodes from one upper level) the whole subtree originating
-                // from that node will be discarded, since the minimizing player will choose the 
-                // beta node over any node with a score higher than the beta. 
-                '''
                 beta = min(temp_move[0], beta)
 
-                '''
-                // Pruning with alpha
-                // Alpha value holds the maximum score among the uncle nodes from one upper level.
-                // We need to find a score higher than this alpha score, because any score lower than
-                // alpha will be eliminated by the maximizing player (upper level). If the score is
-                // lower than (or equal to) alpha, break out of loop discarding any remaining nodes 
-                // and/or subtrees and return the last move.
-                '''
+
                 if temp_move[0] <= alpha:
                     return temp_move
 
@@ -225,17 +174,7 @@ class Minimax:
     def evaluate_horizontal(boardMatrix, forBlack: bool, playersTurn: bool):
 
         evaluations = [0, 2, 0] # [0] -> consecutive count, [1] -> block count, [2] -> score
-        '''
-        // blocks variable is used to check if a consecutive stone set is blocked by the opponent or
-        // the board_matrix border. If the both sides of a consecutive set is blocked, blocks variable will be 2
-        // If only a single side is blocked, blocks variable will be 1, and if both sides of the consecutive
-        // set is free, blocks count will be 0.
-        // By default, first cell in a row is blocked by the left border of the board_matrix.
-        // If the first cell is empty, block count will be decremented by 1.
-        // If there is another empty cell after a consecutive stones set, block count will again be
-        // decremented by 1.
-        // 
-        Iterate over all rows '''
+ 
 
         for i in range(len(boardMatrix)):
             #// Iterate over all cells in a row
