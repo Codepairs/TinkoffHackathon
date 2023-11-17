@@ -24,9 +24,10 @@ class Test:
         x, y = Minimax.calculate_next_move(matrix, depth=2)
         x = (int) (x)
         y = (int) (y)
+        #print(x,y)
         end_time = time.time()
-        print("Calculation time: " + str(
-            int((end_time - start_time) * 1000)) + " ms")
+        #print("Calculation time: " + str(
+        #    int((end_time - start_time) * 1000)) + " ms")
 
         string_field = string_field[:x * 19 + y] + figure + string_field[x * 19 + y + 1:]
         #print(len(string_field))

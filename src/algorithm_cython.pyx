@@ -1,6 +1,7 @@
 import time
 import numpy as np
 cimport numpy as cnp
+from libc.stdlib cimport rand
 from cpython cimport array
 #from Board import Board
 cnp.import_array()
@@ -49,9 +50,9 @@ cdef class Board:
                 idx = i*19+j
                 symb = str_field[idx]
                 if (symb==fig):
-                        matrix[i][j] = 2
-                elif (symb==op_fig):
                         matrix[i][j] = 1
+                elif (symb==op_fig):
+                        matrix[i][j] = 2
         return matrix
 
 
@@ -72,32 +73,32 @@ cdef class Board:
 
                 if (i > 0):
                     if (j > 0):
-                        if (board_matrix[i - 1][j - 1] > 0 or board_matrix[i][j - 1] > 0):
+                        if ((board_matrix[i - 1][j - 1] > 0 or board_matrix[i][j - 1] > 0)):# and board_matrix[i][j]==0):
                             move = [i, j]
                             move_list.append(move)
                             continue
                     if (j < board_size - 1):
-                        if (board_matrix[i - 1][j + 1] > 0 or board_matrix[i][j + 1] > 0):
+                        if ((board_matrix[i - 1][j + 1] > 0 or board_matrix[i][j + 1] > 0)):# and board_matrix[i][j]==0):
                             move = [i, j]
                             move_list.append(move)
                             continue
-                    if (board_matrix[i - 1][j] > 0):
+                    if ((board_matrix[i - 1][j] > 0)):# and board_matrix[i][j]==0):
                         move = [i, j]
                         move_list.append(move)
                         continue
 
                 if (i < board_size - 1):
                     if (j > 0):
-                        if (board_matrix[i + 1][j - 1] > 0 or board_matrix[i][j - 1] > 0):
+                        if ((board_matrix[i + 1][j - 1] > 0 or board_matrix[i][j - 1] > 0)):# and board_matrix[i][j]==0):
                             move = [i, j]
                             move_list.append(move)
                             continue
                     if (j < board_size - 1):
-                        if (board_matrix[i + 1][j + 1] > 0 or board_matrix[i][j + 1] > 0):
+                        if ((board_matrix[i + 1][j + 1] > 0 or board_matrix[i][j + 1] > 0)):# and board_matrix[i][j]==0):
                             move = [i, j]
                             move_list.append(move)
                             continue
-                    if (board_matrix[i + 1][j] > 0):
+                    if ((board_matrix[i + 1][j] > 0)):# and board_matrix[i][j]==0):
                         move = [i, j]
                         move_list.append(move)
                         continue
@@ -165,11 +166,10 @@ cdef class Minimax:
 
             # If there is no such move, search the minimax tree with specified depth.
             bestMove = np.array(Minimax.minimax_search_ab(depth, tmp_board_matrix, 1, -1.0, Minimax.get_win_score()), dtype=np.int64)
-            if (bestMove[1] == 0):
-                move = [0,0]
-            else:
-                move[0] = bestMove[1]
-                move[1] = bestMove[2]
+            #print('Best moves: ')
+            #print(bestMove)
+            move[0] = bestMove[1]
+            move[1] = bestMove[2]
         #clock_gettime(CLOCK_REALTIME, &ts)
         #cdef time_t current_time = time(NULL)
         # print("Cases calculated: " + str(self.evaluationCount) + "
@@ -197,15 +197,21 @@ cdef class Minimax:
 
         # Generate all possible moves from this node of the Minimax Tree
         cdef list  all_possible_moves = (Board.generate_moves(dummy_board_matrix))
-
+        #print("all posible moves:")
+        #print(all_possible_moves)
         cdef list tmp_arr = []
         # If there are no possible moves left, treat this node as a terminal node and return the score.
         if (len(all_possible_moves) == 0):
             tmp_arr = [Minimax.evaluate_board_for_white(dummy_board_matrix, not max_player), 0, 0]
 
             return tmp_arr
-
-        cdef int[3] best_move = [0, 0, 0]
+        
+        cdef int rand_x = rand()%19, rand_y = rand()%19
+        while (dummy_board_matrix[rand_y][rand_x]!=0):
+             rand_x = rand()%19
+             rand_y = rand()%19
+        
+        cdef int[3] best_move = [0, rand_y, rand_x]
         cdef int[3] temp_move = [0, 0, 0]
         # Generate Minimax Tree and calculate node scores.
         if (max_player):
@@ -276,6 +282,7 @@ cdef class Minimax:
         cdef int[3] winning_move = [0, 0, 0]
 
         cdef cnp.ndarray[DTYPE_t, ndim = 2] dummy_board
+        #print(len(all_possible_moves))
         for move in all_possible_moves:
             # Create a temporary board_matrix that is equivalent to the current board_matrix
             dummy_board = Board.clone_matrix(board_matrix)
@@ -286,8 +293,9 @@ cdef class Minimax:
             if (Minimax.get_score(dummy_board, 0, 0) >= Minimax.get_win_score()):
                 winning_move[1] = move[0]
                 winning_move[2] = move[1]
+                #print("winning move: ", winning_move)
                 return winning_move
-
+        #print("search found nothin")
         return []
 
     # This function calculates the score by evaluating the stone positions in horizontal direction
